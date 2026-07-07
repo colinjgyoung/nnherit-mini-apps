@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founder Starting Point — nnherit x BTE603</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --nn:#F3D600; --nn-dark:#d9c000;
+    --ink:#1a1a1a; --ink-soft:#5a5a5a; --ink-muted:#8a8a86;
+    --paper:#ffffff; --paper-warm:#faf9f4; --paper-shade:#f3f1e8;
+    --border:#e4e2d8; --border-strong:#cfccbf;
+    --ok:#46a24a; --radius:10px;
+    --font:'Source Sans Pro','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper-warm);color:var(--ink);font-family:var(--font);line-height:1.45;font-size:16px;}
+  .wrap{max-width:520px;margin:0 auto;padding:18px 16px 40px;}
+  header{border-bottom:4px solid var(--nn);padding:10px 0 10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  header .brand{font-weight:700;font-size:1.02rem;letter-spacing:.01em;}
+  header .mod{font-size:.78rem;color:var(--ink-soft);}
+  h1{font-size:1.32rem;margin:.2em 0 .35em;}
+  h2{font-size:1.08rem;margin:.2em 0 .4em;}
+  p{margin:.4em 0 .8em;}
+  .soft{color:var(--ink-soft);font-size:.92rem;}
+  .tiny{color:var(--ink-muted);font-size:.8rem;}
+  .screen{display:none;}
+  .screen.on{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  .steps{display:flex;gap:5px;margin:0 0 16px;}
+  .steps span{flex:1;height:5px;border-radius:3px;background:var(--border);}
+  .steps span.done{background:var(--nn);}
+  button{font-family:inherit;}
+  .btn{display:block;width:100%;padding:14px 16px;margin:10px 0 0;font-size:1rem;font-weight:600;
+       border-radius:var(--radius);border:1px solid var(--border-strong);background:var(--paper);
+       color:var(--ink);cursor:pointer;min-height:48px;text-align:center;}
+  .btn:active{transform:scale(.99);}
+  .btn.primary{background:var(--nn);border-color:var(--nn-dark);}
+  .btn.quiet{background:transparent;border-color:transparent;color:var(--ink-soft);font-weight:400;text-decoration:underline;min-height:40px;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;padding:13px 12px;font-size:1rem;font-family:inherit;border:1px solid var(--border-strong);
+    border-radius:var(--radius);background:var(--paper);color:var(--ink);}
+  input:focus,select:focus,textarea:focus,button:focus{outline:3px solid var(--nn);outline-offset:1px;}
+  label{display:block;font-weight:600;margin:14px 0 5px;}
+  label .opt{font-weight:400;color:var(--ink-muted);font-size:.85rem;}
+  fieldset{border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin:14px 0 0;}
+  legend{font-weight:600;padding:0 4px;}
+  .radio-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px;}
+  .radio-row label{flex:1 1 auto;font-weight:400;margin:0;border:1px solid var(--border-strong);border-radius:var(--radius);
+    padding:11px 10px;text-align:center;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:center;}
+  .radio-row input{position:absolute;opacity:0;}
+  .radio-row label.sel{background:var(--nn);border-color:var(--nn-dark);font-weight:600;}
+  .cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+  .fcard{position:relative;border:2px solid var(--border-strong);border-radius:var(--radius);background:var(--paper);
+    padding:12px 10px 10px;cursor:pointer;min-height:112px;display:flex;flex-direction:column;gap:4px;text-align:left;}
+  .fcard .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.18);}
+  .fcard .ph{font-weight:700;font-size:.95rem;line-height:1.2;}
+  .fcard .ar{font-size:.8rem;color:var(--ink-soft);}
+  .fcard.sel{border-color:var(--ink);background:#fdf7cf;}
+  .fcard.sel::after{content:"✓";position:absolute;top:6px;right:9px;font-weight:700;font-size:1.05rem;}
+  .fcard .info{position:absolute;bottom:6px;right:8px;border:1px solid var(--border-strong);background:var(--paper-shade);
+    border-radius:50%;width:30px;height:30px;font-size:.85rem;cursor:pointer;}
+  .counter{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;border-radius:20px;
+    padding:7px 14px;text-align:center;font-size:.9rem;margin:0 0 10px;}
+  .backpanel{border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--paper-shade);
+    padding:12px 14px;margin:10px 0;}
+  .backpanel h3{margin:.1em 0 .3em;font-size:1rem;}
+  .backpanel dl{margin:0;}
+  .backpanel dt{font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;margin-top:7px;color:var(--ink-soft);}
+  .backpanel dd{margin:1px 0 0;}
+  .ranklist{margin:12px 0;}
+  .rankrow{display:flex;align-items:center;gap:10px;border:1px solid var(--border-strong);border-radius:var(--radius);
+    background:var(--paper);padding:10px 12px;margin:8px 0;}
+  .rankrow .pos{font-weight:700;font-size:1.15rem;width:26px;text-align:center;}
+  .rankrow .nm{flex:1;}
+  .rankrow .nm .ph{font-weight:700;}
+  .rankrow .nm .ar{font-size:.82rem;color:var(--ink-soft);}
+  .rankrow .mv{display:flex;flex-direction:column;gap:4px;}
+  .rankrow .mv button{width:44px;height:34px;border-radius:8px;border:1px solid var(--border-strong);background:var(--paper-shade);font-size:1rem;cursor:pointer;}
+  .sliderbox{margin:16px 0;}
+  .sliderbox input[type=range]{width:100%;accent-color:var(--nn-dark);height:38px;}
+  .sliderbox .ends{display:flex;justify-content:space-between;font-size:.82rem;color:var(--ink-soft);}
+  .bigval{text-align:center;font-size:2rem;font-weight:700;margin:4px 0 0;}
+  .takeaway{border:2px solid var(--nn);border-radius:var(--radius);background:var(--paper);padding:14px 16px;margin:12px 0;}
+  .takeaway .rk{font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+  .takeaway h3{margin:.05em 0 .15em;font-size:1.06rem;}
+  .takeaway p{margin:.25em 0;font-size:.93rem;}
+  .notice{border-left:4px solid var(--nn);background:var(--paper-shade);padding:10px 12px;border-radius:0 var(--radius) var(--radius) 0;margin:12px 0;font-size:.92rem;}
+  .idbox{font-family:monospace;background:var(--ink);color:#fff;padding:8px 12px;border-radius:8px;display:inline-block;letter-spacing:.08em;}
+  table.fac{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0;}
+  table.fac th,table.fac td{border:1px solid var(--border-strong);padding:6px 8px;text-align:left;}
+  table.fac th{background:var(--paper-shade);}
+  .char{count:none;text-align:right;}
+  .charcount{text-align:right;font-size:.78rem;color:var(--ink-muted);margin-top:3px;}
+  footer{margin-top:26px;text-align:center;}
+  footer .tiny{display:block;}
+  a{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="brand">nnherit</span>
+    <span class="mod">BTE603 · Week 1 · Founder Starting Point</span>
+  </header>
+
+  <div class="steps" id="steps" hidden>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- 0 JOIN -->
+  <section class="screen on" id="s-join">
+    <h1>Founder Starting Point</h1>
+    <p>A short seminar activity — about 12 minutes. It is here to help you think about how you naturally approach entrepreneurship. It does not label you and it does not affect your marks.</p>
+    <label for="code">Session code <span class="opt">(shown on the seminar screen)</span></label>
+    <input type="text" id="code" inputmode="text" autocomplete="off" maxlength="12" placeholder="e.g. WK1-A">
+    <button class="btn primary" id="b-join">Join session</button>
+    <p class="tiny" style="margin-top:14px;">Anonymous by default. No names required.</p>
+    <button class="btn quiet" id="b-fac">Facilitator view</button>
+  </section>
+
+  <!-- 1 CONSENT -->
+  <section class="screen" id="s-consent">
+    <h2>Before you start</h2>
+    <p>This short activity is part of normal seminar learning. If you opt in, anonymous interaction data from your choices may be used to improve the teaching activity and nnherit's product design. Your participation or non-participation will not affect marks, feedback, or standing in the module. Do not enter your name or contact details. You can skip, participate without data capture, or withdraw later using the code shown at the end.</p>
+    <p class="soft">If you opt in, this activity will record which cards you pick and how you rank them, your one-line reflection, your anonymous confidence rating, and your optional background answers.</p>
+    <button class="btn primary" id="b-optin">Opt in and continue</button>
+    <button class="btn" id="b-nocapture">Continue without data capture</button>
+    <button class="btn quiet" id="b-skip">Skip this activity</button>
+  </section>
+
+  <!-- SKIPPED -->
+  <section class="screen" id="s-skipped">
+    <h2>No problem</h2>
+    <p>You can continue the seminar without the app. This is normal and fully fine. If you change your mind, reload this page.</p>
+  </section>
+
+  <!-- 2 PICK -->
+  <section class="screen" id="s-pick">
+    <div class="counter" id="pickcount">Pick 3 cards — 0 of 3 selected</div>
+    <h2>How do you naturally approach entrepreneurship?</h2>
+    <p class="soft">Scan the ten cards. Tap the <strong>3</strong> that feel most like your natural starting point as a founder. Tap the ⓘ to read more about a card. Tap a selected card again to unselect it.</p>
+    <div class="cardgrid" id="grid"></div>
+    <div id="backview"></div>
+    <button class="btn primary" id="b-picked" disabled>Continue with these 3</button>
+  </section>
+
+  <!-- 3 RANK -->
+  <section class="screen" id="s-rank">
+    <h2>Put them in order</h2>
+    <p class="soft">Which one leads the way when you start something new? Use the arrows so position 1 is your leading approach.</p>
+    <div class="ranklist" id="ranklist"></div>
+    <button class="btn primary" id="b-ranked">This order is right</button>
+  </section>
+
+  <!-- 4 REFLECT: one-liner + confidence -->
+  <section class="screen" id="s-reflect">
+    <h2>Two quick reflections</h2>
+    <label for="oneliner">Finish the sentence</label>
+    <p class="soft" style="margin-top:0;">"When I start something new, I usually…"</p>
+    <textarea id="oneliner" rows="3" maxlength="140" placeholder="…"></textarea>
+    <div class="charcount"><span id="cc">0</span>/140</div>
+    <div class="sliderbox">
+      <label for="conf">Right now, how confident are you that you have a venture idea worth exploring?</label>
+      <input type="range" id="conf" min="1" max="5" step="1" value="3" aria-describedby="confval">
+      <div class="ends"><span>1 · not yet</span><span>5 · very confident</span></div>
+      <div class="bigval" id="confval">3</div>
+    </div>
+    <button class="btn primary" id="b-reflected">Continue</button>
+  </section>
+
+  <!-- 5 ABOUT (optional demographics) -->
+  <section class="screen" id="s-about">
+    <h2>Four optional questions about you</h2>
+    <p class="soft">These help the course team understand the group as a whole. All optional, all anonymous — skip any or all of them.</p>
+
+    <fieldset>
+      <legend>Is your family involved in running a business?</legend>
+      <div class="radio-row" id="rr-fb">
+        <label><input type="radio" name="fb" value="yes">Yes</label>
+        <label><input type="radio" name="fb" value="no">No</label>
+        <label><input type="radio" name="fb" value="pnts">Prefer not to say</label>
+      </div>
+    </fieldset>
+
+    <label for="country">Country you call home <span class="opt">(optional)</span></label>
+    <input type="text" id="country" maxlength="40" autocomplete="off" placeholder="e.g. Cyprus">
+
+    <fieldset>
+      <legend>Have you started a business of your own?</legend>
+      <div class="radio-row" id="rr-biz">
+        <label><input type="radio" name="biz" value="no">No</label>
+        <label><input type="radio" name="biz" value="yes">Yes</label>
+      </div>
+      <div id="bizage-box" hidden>
+        <label for="bizage">How old is that business?</label>
+        <select id="bizage">
+          <option value="">Choose…</option>
+          <option value="<1y">Under 1 year</option>
+          <option value="1-3y">1–3 years</option>
+          <option value="3-5y">3–5 years</option>
+          <option value="5y+">Over 5 years</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <label for="playscore">Your playscore <span class="opt">(optional — enter it if you know it)</span></label>
+    <input type="number" id="playscore" inputmode="numeric" min="0" max="100" placeholder="e.g. 62">
+
+    <button class="btn primary" id="b-about">Continue</button>
+    <button class="btn quiet" id="b-aboutskip">Skip all four</button>
+  </section>
+
+  <!-- 6 DONE -->
+  <section class="screen" id="s-done">
+    <h2>Your founder starting point</h2>
+    <p class="soft">A reflection, not a result. These are the three approaches you said feel most natural — and one thing each is worth watching.</p>
+    <div id="takeaways"></div>
+    <div class="notice" id="peerprompt"><strong>Now turn to a partner.</strong> Compare your number 1 cards. One overlap, one difference — two minutes.</div>
+    <button class="btn primary" id="b-pdf">Download my results (PDF)</button>
+    <button class="btn" id="b-submit">Submit and finish</button>
+    <div id="afterword" hidden>
+      <p style="margin-top:16px;"><strong>Done — thank you.</strong></p>
+      <p class="soft">To withdraw your data later, give this code to your facilitator:</p>
+      <p><span class="idbox" id="ridbox"></span></p>
+    </div>
+  </section>
+
+  <!-- FACILITATOR -->
+  <section class="screen" id="s-facil">
+    <h2>Facilitator view</h2>
+    <div id="fac-locked">
+      <label for="faccode">Facilitator code</label>
+      <input type="text" id="faccode" autocomplete="off">
+      <button class="btn primary" id="b-facunlock">Open</button>
+    </div>
+    <div id="fac-open" hidden>
+      <p class="soft">Submissions stored on <strong>this device</strong> are listed below. When the Google Sheet endpoint is connected, all phones in the session send their results there — the sheet is the full session view.</p>
+      <div id="fac-summary"></div>
+      <button class="btn" id="b-faccsv">Download this device's data (CSV)</button>
+      <button class="btn quiet" id="b-facback">Back to start</button>
+    </div>
+  </section>
+
+  <footer>
+    <span class="tiny">Founder Starting Point · a structured reflection tool by nnherit · nnherit.com</span>
+    <span class="tiny">Anonymous by default · withdrawal as easy as opting in</span>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ================= CONFIG (edit these) ================= */
+const CONFIG = {
+  ENDPOINT: '',              // Google Apps Script web-app URL. Empty = store locally only.
+  FACILITATOR_CODE: 'nnherit-fac',
+  ACTIVITY_ID: 'app1-founder-starting-point',
+  CONSENT_VERSION: 'v1-2026-07-07'
+};
+
+/* ============ CARD DATA — Family Dynamics, Character Map copy ============ */
+const CARDS = [
+  { id:1,  colour:'#1B4D3E', phrase:'The Right Way',          archetype:'The Standard Setter',
+    drive:'To maintain order and correctness', contribution:'Structure, clarity, discipline',
+    tension:'Rigidity, moral pressure, inflexibility', growth:'Balance standards with flexibility' },
+  { id:2,  colour:'#E8720C', phrase:'Here to Help',           archetype:'The Supporter',
+    drive:'To help and be valued by others', contribution:'Care, generosity, relationship building',
+    tension:'Over-involvement, hidden expectations', growth:'Support without losing boundaries' },
+  { id:3,  colour:'#4FC3E0', phrase:'I Will Be the Best',     archetype:'The Driver',
+    drive:'To achieve and prove capability', contribution:'Momentum, ambition, visible progress',
+    tension:'Pressure, comparison, performance focus', growth:'Align success with collective goals' },
+  { id:4,  colour:'#F0C808', phrase:'I Am Me',                archetype:'The Catalyst',
+    drive:'To express identity and meaning', contribution:'Creativity, authenticity, emotional depth',
+    tension:'Sensitivity, feeling misunderstood', growth:'Channel emotion into contribution' },
+  { id:5,  colour:'#1F3A93', phrase:'I Know Everything',      archetype:'The Strategist',
+    drive:'To understand systems and gain insight', contribution:'Analysis, curiosity, intellectual clarity',
+    tension:'Detachment, withholding participation', growth:'Share knowledge earlier' },
+  { id:6,  colour:'#7B3F99', phrase:'Trust Me',               archetype:'The Stabiliser',
+    drive:'To maintain trust and reliability', contribution:'Loyalty, dependability, emotional safety',
+    tension:'Over-responsibility, difficulty saying no', growth:'Trust shared responsibility' },
+  { id:7,  colour:'#E85D9E', phrase:'Life Is for the Taking', archetype:'The Initiator',
+    drive:'To experience possibility and freedom', contribution:'Energy, exploration, new opportunities',
+    tension:'Impulsiveness, unfinished initiatives', growth:'Commit and follow through' },
+  { id:8,  colour:'#D7263D', phrase:'My Way or the Highway',  archetype:'The Controller',
+    drive:'To protect autonomy and control outcomes', contribution:'Strength, decisiveness, courage',
+    tension:'Domination, conflict escalation', growth:'Use strength with restraint' },
+  { id:9,  colour:'#8BC34A', phrase:'Get Along',              archetype:'The Integrator',
+    drive:'To maintain harmony in the system', contribution:'Mediation, perspective, calm',
+    tension:'Avoidance of difficult issues', growth:'Engage with constructive conflict' },
+  { id:10, colour:'#9E9E98', phrase:'Peace',                  archetype:'The Steward',
+    drive:'To guide responsibly and ethically', contribution:'Wisdom, long-term thinking, mentorship',
+    tension:'Moral authority, reluctance to adapt', growth:'Stay open to new perspectives' }
+];
+
+/* Rank-flavoured, claim-safe interpretation lines for the PDF/takeaway */
+const RANK_FRAMES = [
+  'Your leading approach. This is probably what you reach for first when something new starts.',
+  'Your supporting approach. It shapes how you work once things are moving.',
+  'Your background approach. Quieter, but part of how you read situations.'
+];
+
+/* ================= STATE ================= */
+const state = {
+  session:'', consent:null, picked:[], ranked:[], oneliner:'', confidence:3,
+  demographics:{fb:null,country:null,biz:null,bizage:null,playscore:null},
+  revisions:0, started:null, responseId:null, submitted:false
+};
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+function show(id){
+  $$('.screen').forEach(el=>el.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo({top:0});
+  const stepIdx = ['#s-join','#s-consent','#s-pick','#s-rank','#s-reflect','#s-about','#s-done'].indexOf(id);
+  $('#steps').hidden = stepIdx < 1;
+  if(stepIdx>=1){ $$('#steps span').forEach((sp,i)=>sp.classList.toggle('done', i < stepIdx)); }
+}
+function rid(){ return 'R-' + Math.random().toString(36).slice(2,7).toUpperCase(); }
+function esc(t){ const d=document.createElement('div'); d.textContent=t??''; return d.innerHTML; }
+
+/* ================= JOIN ================= */
+$('#b-join').onclick = () => {
+  const c = $('#code').value.trim().toUpperCase();
+  if(!c){ $('#code').focus(); return; }
+  state.session = c;
+  show('#s-consent');
+};
+$('#b-fac').onclick = () => show('#s-facil');
+
+/* ================= CONSENT ================= */
+$('#b-optin').onclick   = () => { state.consent='optin';     begin(); };
+$('#b-nocapture').onclick = () => { state.consent='nocapture'; begin(); };
+$('#b-skip').onclick    = () => { state.consent='skipped';   show('#s-skipped'); };
+function begin(){
+  state.started = Date.now();
+  state.responseId = rid();
+  renderGrid();
+  show('#s-pick');
+}
+
+/* ================= PICK ================= */
+function renderGrid(){
+  const g = $('#grid'); g.innerHTML='';
+  CARDS.forEach(c=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='fcard'; b.dataset.id=c.id;
+    b.setAttribute('aria-pressed', state.picked.includes(c.id));
+    b.innerHTML = `<span class="dot" style="background:${c.colour}"></span>
+      <span class="ph">${esc(c.phrase)}</span><span class="ar">${esc(c.archetype)}</span>
+      <span class="info" role="button" aria-label="About ${esc(c.archetype)}" data-info="${c.id}">ⓘ</span>`;
+    b.onclick = (ev)=>{
+      if(ev.target.dataset.info){ showBack(c); return; }
+      toggle(c.id, b);
+    };
+    if(state.picked.includes(c.id)) b.classList.add('sel');
+    g.appendChild(b);
+  });
+  updateCount();
+}
+function toggle(id, el){
+  const i = state.picked.indexOf(id);
+  if(i>-1){ state.picked.splice(i,1); el.classList.remove('sel'); state.revisions++; }
+  else {
+    if(state.picked.length>=3){ flashCount('You already have 3 — unselect one first'); return; }
+    state.picked.push(id); el.classList.add('sel');
+  }
+  el.setAttribute('aria-pressed', state.picked.includes(id));
+  updateCount();
+}
+function updateCount(msg){
+  $('#pickcount').textContent = msg || `Pick 3 cards — ${state.picked.length} of 3 selected`;
+  $('#b-picked').disabled = state.picked.length!==3;
+}
+let flashT;
+function flashCount(m){ updateCount(m); clearTimeout(flashT); flashT=setTimeout(()=>updateCount(),1800); }
+function showBack(c){
+  $('#backview').innerHTML = `<div class="backpanel" role="note">
+    <h3>${esc(c.phrase)} — ${esc(c.archetype)}</h3>
+    <dl>
+      <dt>Core drive</dt><dd>${esc(c.drive)}</dd>
+      <dt>Contribution</dt><dd>${esc(c.contribution)}</dd>
+      <dt>Tension to watch</dt><dd>${esc(c.tension)}</dd>
+      <dt>Growth direction</dt><dd>${esc(c.growth)}</dd>
+    </dl></div>`;
+  $('#backview').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+$('#b-picked').onclick = () => { state.ranked=[...state.picked]; renderRank(); show('#s-rank'); };
+
+/* ================= RANK ================= */
+function renderRank(){
+  const rl = $('#ranklist'); rl.innerHTML='';
+  state.ranked.forEach((id,idx)=>{
+    const c = CARDS.find(x=>x.id===id);
+    const row = document.createElement('div'); row.className='rankrow';
+    row.innerHTML = `<span class="pos">${idx+1}</span>
+      <span class="nm"><span class="ph">${esc(c.phrase)}</span><br><span class="ar">${esc(c.archetype)}</span></span>
+      <span class="mv">
+        <button type="button" aria-label="Move ${esc(c.archetype)} up" ${idx===0?'disabled':''} data-up="${idx}">▲</button>
+        <button type="button" aria-label="Move ${esc(c.archetype)} down" ${idx===2?'disabled':''} data-down="${idx}">▼</button>
+      </span>`;
+    rl.appendChild(row);
+  });
+  rl.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{ swap(+b.dataset.up,+b.dataset.up-1); });
+  rl.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>{ swap(+b.dataset.down,+b.dataset.down+1); });
+}
+function swap(a,b){ [state.ranked[a],state.ranked[b]]=[state.ranked[b],state.ranked[a]]; state.revisions++; renderRank(); }
+$('#b-ranked').onclick = () => show('#s-reflect');
+
+/* ================= REFLECT ================= */
+$('#oneliner').addEventListener('input', e=>{ $('#cc').textContent=e.target.value.length; });
+$('#conf').addEventListener('input', e=>{ $('#confval').textContent=e.target.value; });
+$('#b-reflected').onclick = () => {
+  state.oneliner = $('#oneliner').value.trim();
+  state.confidence = +$('#conf').value;
+  show('#s-about');
+};
+
+/* ================= ABOUT (demographics) ================= */
+$$('.radio-row').forEach(rr=>{
+  rr.addEventListener('change', e=>{
+    rr.querySelectorAll('label').forEach(l=>l.classList.toggle('sel', l.querySelector('input').checked));
+    if(rr.id==='rr-biz'){ $('#bizage-box').hidden = e.target.value!=='yes'; }
+  });
+});
+$('#b-about').onclick = () => {
+  const d = state.demographics;
+  d.fb = (document.querySelector('input[name=fb]:checked')||{}).value || null;
+  d.country = $('#country').value.trim() || null;
+  d.biz = (document.querySelector('input[name=biz]:checked')||{}).value || null;
+  d.bizage = d.biz==='yes' ? ($('#bizage').value||null) : null;
+  const ps = $('#playscore').value; d.playscore = ps===''?null:+ps;
+  finish();
+};
+$('#b-aboutskip').onclick = () => finish();
+
+/* ================= DONE ================= */
+function finish(){
+  const tw = $('#takeaways'); tw.innerHTML='';
+  state.ranked.forEach((id,idx)=>{
+    const c = CARDS.find(x=>x.id===id);
+    tw.innerHTML += `<div class="takeaway">
+      <span class="rk">${idx+1} — ${idx===0?'leading':idx===1?'supporting':'background'}</span>
+      <h3>${esc(c.phrase)} · ${esc(c.archetype)}</h3>
+      <p>${esc(RANK_FRAMES[idx])}</p>
+      <p><strong>What it brings:</strong> ${esc(c.contribution)}.</p>
+      <p><strong>Worth watching:</strong> ${esc(c.tension)}.</p>
+      <p><strong>One practical move:</strong> ${esc(c.growth)}.</p>
+    </div>`;
+  });
+  $('#b-submit').textContent = state.consent==='optin' ? 'Submit and finish' : 'Finish (nothing is sent)';
+  show('#s-done');
+}
+
+/* ================= PDF ================= */
+$('#b-pdf').onclick = () => {
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    const W = 210, M = 18; let y = 20;
+    const wrapText = (t, size, style, maxW) => {
+      doc.setFont('helvetica', style||'normal'); doc.setFontSize(size);
+      return doc.splitTextToSize(t, maxW || (W - 2*M));
+    };
+    const put = (t, size, style, gap) => {
+      const lines = wrapText(t, size, style);
+      lines.forEach(ln=>{ if(y>275){ doc.addPage(); y=20; } doc.text(ln, M, y); y += (size*0.45); });
+      y += (gap??3);
+    };
+    doc.setFillColor(243,214,0); doc.rect(0,0,W,12,'F');
+    put('Founder Starting Point — your reflection', 16, 'bold', 4);
+    put(`BTE603 seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
+    state.ranked.forEach((id,idx)=>{
+      const c = CARDS.find(x=>x.id===id);
+      put(`${idx+1}. "${c.phrase}" — ${c.archetype} (${idx===0?'leading':idx===1?'supporting':'background'} approach)`, 12, 'bold', 1);
+      put(RANK_FRAMES[idx], 10, 'normal', 1);
+      put(`Core drive: ${c.drive}`, 10, 'normal', 1);
+      put(`What it brings: ${c.contribution}`, 10, 'normal', 1);
+      put(`Worth watching: ${c.tension}`, 10, 'normal', 1);
+      put(`One practical move: ${c.growth}`, 10, 'normal', 5);
+    });
+    if(state.oneliner) put(`Your line: "When I start something new, I usually ${state.oneliner}"`, 10, 'italic', 4);
+    put(`Confidence that you have an idea worth exploring right now: ${state.confidence} of 5`, 10, 'normal', 6);
+    put('How to read this: these three cards describe the approaches you said feel most natural. They are reflection prompts drawn from your own choices today — not a personality result, not a verdict. The useful question is what each approach makes easy for you, and what it makes easy to miss.', 9, 'italic', 4);
+    put('Founder Starting Point is a structured reflection tool by nnherit · nnherit.com', 8, 'normal', 0);
+    doc.save('founder-starting-point.pdf');
+  }catch(err){
+    alert('PDF download is not available on this connection — take a screenshot of your results instead.');
+  }
+};
+
+/* ================= SUBMIT ================= */
+function payload(){
+  return {
+    v:1, activity:CONFIG.ACTIVITY_ID, consentVersion:CONFIG.CONSENT_VERSION,
+    session:state.session, responseId:state.responseId, ts:new Date().toISOString(),
+    consent:state.consent,
+    cardsRanked: state.ranked.map(id=>CARDS.find(c=>c.id===id).archetype),
+    oneliner: state.oneliner, confidence: state.confidence,
+    demographics: state.demographics,
+    revisions: state.revisions,
+    secondsOnTask: Math.round((Date.now()-state.started)/1000)
+  };
+}
+$('#b-submit').onclick = async () => {
+  if(state.submitted) return;
+  state.submitted = true;
+  $('#b-submit').disabled = true;
+  if(state.consent==='optin'){
+    const p = payload();
+    try{
+      const log = JSON.parse(localStorage.getItem('nnherit-app1-log')||'[]');
+      log.push(p); localStorage.setItem('nnherit-app1-log', JSON.stringify(log));
+    }catch(e){}
+    if(CONFIG.ENDPOINT){
+      try{ await fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}); }
+      catch(e){}
+    }
+  }
+  $('#ridbox').textContent = state.responseId;
+  $('#afterword').hidden = false;
+  $('#peerprompt').scrollIntoView({behavior:'smooth'});
+};
+
+/* ================= FACILITATOR ================= */
+$('#b-facunlock').onclick = () => {
+  if($('#faccode').value.trim() !== CONFIG.FACILITATOR_CODE){ $('#faccode').value=''; $('#faccode').placeholder='Wrong code'; return; }
+  $('#fac-locked').hidden = true; $('#fac-open').hidden = false;
+  renderFac();
+};
+function renderFac(){
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app1-log')||'[]'); }catch(e){}
+  if(!log.length){ $('#fac-summary').innerHTML = '<p class="soft">No submissions stored on this device yet.</p>'; return; }
+  const counts = {};
+  log.forEach(r=> (r.cardsRanked||[]).forEach((a,i)=>{ counts[a]=counts[a]||[0,0,0]; counts[a][i]++; }));
+  let rows = Object.entries(counts).map(([a,c])=>`<tr><td>${esc(a)}</td><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td></tr>`).join('');
+  $('#fac-summary').innerHTML = `<p><strong>${log.length}</strong> submission(s) on this device.</p>
+    <table class="fac"><thead><tr><th>Archetype</th><th>#1</th><th>#2</th><th>#3</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+$('#b-faccsv').onclick = () => {
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app1-log')||'[]'); }catch(e){}
+  const head = ['ts','session','responseId','consent','card1','card2','card3','oneliner','confidence','fb','country','biz','bizage','playscore','revisions','secondsOnTask'];
+  const lines = [head.join(',')].concat(log.map(r=>{
+    const d=r.demographics||{};
+    const f = v => `"${String(v??'').replace(/"/g,'""')}"`;
+    return [r.ts,r.session,r.responseId,r.consent,(r.cardsRanked||[])[0],(r.cardsRanked||[])[1],(r.cardsRanked||[])[2],
+      r.oneliner,r.confidence,d.fb,d.country,d.biz,d.bizage,d.playscore,r.revisions,r.secondsOnTask].map(f).join(',');
+  }));
+  const blob = new Blob([lines.join('\n')],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='nnherit-app1-session-data.csv'; a.click();
+};
+$('#b-facback').onclick = () => location.reload();
+</script>
+</body>
+</html>
