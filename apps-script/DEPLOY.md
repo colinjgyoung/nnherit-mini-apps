@@ -5,14 +5,14 @@ Done from your own Google account so all data lands in your Drive and only you h
 ## 1. Create the spreadsheet
 
 1. Go to [sheets.google.com](https://sheets.google.com) → **Blank spreadsheet**
-2. Name it `nnherit BTE603 app data` (top-left title box)
+2. Name it `nnherit mini apps` (top-left title box)
 
 ## 2. Add the script
 
 1. In that spreadsheet: **Extensions → Apps Script**
 2. Delete the placeholder code in the editor
 3. Paste the full contents of [`Code.gs`](Code.gs) from this folder
-4. Click the save icon. Name the project `nnherit data endpoint` when asked
+4. Click the save icon. Name the project `nnherit mini apps endpoint` when asked
 
 ## 3. Deploy as a web app
 
@@ -23,7 +23,7 @@ Done from your own Google account so all data lands in your Drive and only you h
    - Execute as: **Me**
    - Who has access: **Anyone**  ← required so student phones can post without logging in
 4. Click **Deploy**
-5. Authorise when prompted: choose your account → you'll see "Google hasn't verified this app" → click **Advanced** → **Go to nnherit data endpoint (unsafe)** → **Allow**
+5. Authorise when prompted: choose your account → you'll see "Google hasn't verified this app" → click **Advanced** → **Go to nnherit mini apps endpoint (unsafe)** → **Allow**
    (This warning is normal for personal scripts — it's your own code running in your own account.)
 6. Copy the **Web app URL** (ends in `/exec`)
 
