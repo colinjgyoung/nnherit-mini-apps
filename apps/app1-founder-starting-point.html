@@ -506,10 +506,13 @@ function payload(){
     secondsOnTask: Math.round((Date.now()-state.started)/1000)
   };
 }
-$('#b-submit').onclick = async () => {
+$('#b-submit').onclick = () => {
   if(state.submitted) return;
   state.submitted = true;
   $('#b-submit').disabled = true;
+  $('#ridbox').textContent = state.responseId;
+  $('#afterword').hidden = false;
+  $('#peerprompt').scrollIntoView({behavior:'smooth'});
   if(state.consent==='optin'){
     const p = payload();
     try{
@@ -517,13 +520,11 @@ $('#b-submit').onclick = async () => {
       log.push(p); localStorage.setItem('nnherit-app1-log', JSON.stringify(log));
     }catch(e){}
     if(CONFIG.ENDPOINT){
-      try{ await fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}); }
+      // fire-and-forget: never keep the student waiting on seminar wifi
+      try{ fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}).catch(()=>{}); }
       catch(e){}
     }
   }
-  $('#ridbox').textContent = state.responseId;
-  $('#afterword').hidden = false;
-  $('#peerprompt').scrollIntoView({behavior:'smooth'});
 };
 
 /* ================= FACILITATOR ================= */

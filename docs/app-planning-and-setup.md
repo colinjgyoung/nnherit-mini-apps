@@ -6,6 +6,8 @@ Status: draft
 
 Updated 2026-07-07: new 12-week outline adopted (old outline superseded); open questions answered; Pattern Reflection dropped (classroom exercise instead); Stakeholder Tension Map kept.
 
+Synced 2026-07-07 (later): Colin's Google Doc edits pulled in — App 2 now multi-deck (Succession metaphor + Entrepreneurial card for the customer, archetypes for self), App 3 gains Succession metaphors and 3 assumptions, App 4 pick 2 + ranked justification, App 7 stress test draws 3 cards. Interpreted numbers flagged inline with [check].
+
 ---
 
 ## 1. Overall build approach
@@ -37,25 +39,25 @@ Updated 2026-07-07: new 12-week outline adopted (old outline superseded); open q
 - **nnherit learns:** founder self-perception patterns, playfulness/risk orientation, family-business background of cohort, confidence baseline — the richest dataset of the term.
 - **Deck: Family Dynamics archetypes (confirmed 2026-07-07)** — they fit founder self-perception better than Entrepreneurial Dynamics competences.
 
-### App 2 — Are Your Customers Just Like You? (Week 3)
+### App 2 — Are Your Customers Just Like You? (Week 3) — MULTI-DECK (Doc edit 2026-07-07)
 - **Unit connection:** Week 3, Customer profiling and empathy mapping.
-- **Deck: Family Dynamics 10 archetypes (decided 2026-07-07)** — same deck as App 1. Person-to-person comparison needs person-descriptor cards; using one deck across both apps makes projection measurable within a single session (card overlap), no cross-week linking. Copy from the Character Map only (IP rule). Plan B if Ed wants entrepreneurial language: 9-card Entrepreneurial Dynamics subset read as customer motivations (Ethical & Sustainable Thinking, Financial Literacy, Coping with Uncertainty, Working with Others, Learning through Experience, Taking the Initiative, Creativity, Vision, Motivation & Perseverance).
-- **Build:** 4-box mini empathy map + archetype picker (2 of 10 for the customer) + archetype picker (2 of 10 for self) + "Not like me / Very like me" similarity slider + one rewrite field.
-- **Participants do:** describe their customer, pick 2 archetypes matching the customer, pick 2 matching themselves, rate similarity, spot one projection, rewrite it as a testable assumption.
+- **Decks:** customer described via **1 Succession Dynamics metaphor card** (from the agnostic 12-card subset, non-family-business framing) + **1 Entrepreneurial Dynamics card** (best-suited of the 15); self described via **2 Family Dynamics archetypes** (Character Map copy only — IP rule). No cross-week link with App 1 choices.
+- **Build:** 4-box mini empathy map + metaphor picker (1 of 12 Succession Dynamics cards for the customer) + Entrepreneurial Dynamics picker (1 of 15 for the customer) + archetype picker (2 of 10 for self) + "Not like me / Very like me" similarity slider + one rewrite field per card, each in its own screen/window.
+- **Participants do:** describe their customer, pick 1 metaphor + 1 entrepreneurial card matching the customer type, pick 2 archetypes matching themselves, rate similarity, spot one projection, rewrite it as a testable customer pain / gain / jobs-to-be-done statement.
 - **Connects to unit:** exposes whether their "customer" is really just a mirror of themselves — directly improves empathy-map quality.
-- **nnherit learns:** projection rates (self/customer card overlap + slider), similarity distributions, which archetypes get assigned to "customers" vs "self".
+- **nnherit learns:** projection rates (customer-card vs self-card contrast + slider), similarity distributions, which metaphors/competences get assigned to "customers" vs which archetypes to "self".
 
 ### App 3 — Assumption Dissonance Check (Week 5)
 - **Unit connection:** Week 5, Assumption testing.
-- **Build:** assumption text box (capped) + card picker (up to 2 value/motivation drivers) + 3-state selector (Aligned / Misaligned / Unproven) + next-test menu (interview, landing page, competitor scan, survey, prototype, other).
-- **Participants do:** write one customer/market/offer assumption, compare it with the values or motivations revealed by their card choices, label its evidence status, pick one concrete next test.
+- **Build (Doc edit 2026-07-07):** assumption text boxes (**3 assumptions**, capped) + card picker with up to 2 value/motivation drivers — **1 from the 15 Entrepreneurial Dynamics cards + 1 from the 12 Succession Dynamics metaphor subset** + 3-state selector (Aligned / Misaligned / Unproven) + next-test menu (interview, landing page, competitor scan, survey, prototype, other).
+- **Participants do:** write **3** customer/market/offer assumptions, compare them with the values or motivations revealed by their card choices (1 card per deck), label evidence status, pick one concrete next test. [check: assumed evidence label applies per assumption, one next test overall]
 - **Connects to unit:** every student leaves with a labelled assumption and a planned test.
 - **nnherit learns:** gaps between founder values and customer assumptions, common blind spots, readiness to test.
 
 ### App 4 — What Does This Venture Promise? (Week 7)
 - **Unit connection:** Week 7, Landing page, message and value proposition.
-- **Build:** before/after headline fields + card picker (the emotional or trust promise behind the venture) + sentence-starter template ("For people who need __, we help them __ without __") + trust-cue choice + optional peer vote.
-- **Participants do:** write current one-line offer, pick the promise card, rewrite the line, verbal peer check ("Would I trust this more?"), submit final.
+- **Build (Doc edit 2026-07-07):** before/after headline fields + card picker from the **same 15 Entrepreneurial Dynamics cards as Apps 2 & 3** (the 8 promise-category mappings kept as interpretation seeds) + sentence-starter template ("For people who need __, we help them __ without __") + trust-cue choice + optional peer vote.
+- **Participants do:** write current one-line offer, pick **2** promise cards and **rank them with a short justification**, rewrite the line, verbal peer check ("Would I trust this more?"), submit final.
 - **Connects to unit:** better promise = better landing page — the week's core skill.
 - **nnherit learns:** language patterns, trust signals, which values students emphasise, before/after clarity shift.
 
@@ -78,7 +80,7 @@ Updated 2026-07-07: new 12-week outline adopted (old outline superseded); open q
 ### App 7 — Would You Fund This? (Week 11) — SIMPLIFIED + STRESS-TEST ROUND
 - **Unit connection:** Week 11, Valuation and venture judgement.
 - **Deck: Succession Dynamics, agnostic 12-card subset (decided 2026-07-07)** — used in a closing stress-test round. Cards are co-founder/team/leadership shocks with nothing family-assumed. In-app labels: "Harmony" shown as "Team harmony", "Family" shown as "Relationships" — app-only framing, deck untouched.
-- **Build:** simple matrix — place venture strengths and risks on an Impact/Confidence grid + evidence-type tags (interview, click test, sales proxy, prototype reaction, secondary research, operational proof) + "what evidence would raise confidence" field + valuation-confidence slider + **stress-test round**: draw 1 scenario card, estimate its impact on your venture (per dimension), then reveal the card's official scores and compare.
+- **Build:** simple matrix — place venture strengths and risks on an Impact/Confidence grid + evidence-type tags (interview, click test, sales proxy, prototype reaction, secondary research, operational proof) + "what evidence would raise confidence" field + valuation-confidence slider + **stress-test round**: draw **3** scenario cards (Doc edit 2026-07-07), estimate each card's impact on your venture (per dimension), then reveal the cards' official scores and compare.
 - **Participants do:** place strengths/risks, tag evidence, name the confidence-raising evidence, rate confidence, then stress-test the venture against a drawn scenario and see how their impact estimate compares with the card's scoring.
 - **Connects to unit:** turns valuation from a guess into an evidence exercise, and the stress test makes risk concrete — "would you still fund this if…".
 - **nnherit learns:** how students judge value, evidence quality, risk perception, confidence calibration — plus **crowdsourced calibration of Succession Dynamics impact scores against a real audience**, sliceable later by the App 1 family-business demo answer. The strongest product-learning signal in the set.
@@ -109,9 +111,9 @@ Done as a classroom exercise instead — no app, no cross-week data linkage need
 
 | Deck | Used in | Source | Note |
 |---|---|---|---|
-| Entrepreneurial Dynamics (EU competence-based; brand docs say 45 cards, Drive sheet shows 15 competences — count to resolve before Apps 3–4 [uncertain]) | Apps 3, 4, 5, 6 | Drive: "EntreComp Final Cads 26-03-25" folder + "Similes & Situations for EntreComps.xlsx" | Pull card list at build time |
+| Entrepreneurial Dynamics (EU competence-based; brand docs say 45 cards, Drive sheet shows 15 competences — count to resolve before Apps 3–4 [uncertain]) | Apps 2, 3, 4, 5, 6 | Drive: "EntreComp Final Cads 26-03-25" folder + "Similes & Situations for EntreComps.xlsx" | Pull card list at build time |
 | Family Dynamics (10 archetypes) | Apps 1, 2 (confirmed: App 1 founder self-perception, App 2 customer/self comparison) | Character Map copy, already embedded in the Character Pyramid prototype (`05_INTERACTIVE_PROTOTYPES/Family_Dynamics_Pyramid/index.html`) | **IP rule: use only the Character Map copy. Never use the "Character Card Details ALL" sheet's back-of-card text** (Crystal Knows–derived — see `04_PRODUCTS_AND_PLAYFUL_OBJECTS/Family_Dynamics_Card_Copy_IP_Review.md`) |
-| Succession Dynamics (60 hex cards, scored) | App 7 stress-test round (agnostic 12-card subset — see card table below) | `04_PRODUCTS_AND_PLAYFUL_OBJECTS/01_Succession_Dynamics_scenario_cards/Succession_Dynamics_Card_Checklist.csv` | Full data model ready |
+| Succession Dynamics (60 hex cards, scored) | Apps 2, 3 (metaphor role) + App 7 stress-test round — all via the agnostic 12-card subset (see card table below) | `04_PRODUCTS_AND_PLAYFUL_OBJECTS/01_Succession_Dynamics_scenario_cards/Succession_Dynamics_Card_Checklist.csv` | Full data model ready |
 
 Reusable code: Character Pyramid prototype (card picker, tap/drag placement, card flip, touch detection, copy-takeaway) and Honeycomb prototype (hex board, brand CSS variables, impact dials).
 
@@ -126,12 +128,12 @@ Spotting Opportunities · Creativity · Vision · Valuing Ideas · Ethical & Sus
 | App | Deck | Cards used | How used |
 |---|---|---|---|
 | 1 Founder Starting Point | Family Dynamics | **All 10 archetypes** | Student picks 3 that match their natural founder approach; back-of-card (Core Drive / Contribution / Tension / Growth) feeds the PDF interpretation |
-| 2 Are Your Customers Just Like You? | Family Dynamics | **All 10 archetypes** | Pick 2 for the customer, 2 for self; overlap = projection score |
-| 3 Assumption Dissonance Check | Entrepreneurial Dynamics | **9 cards:** Spotting Opportunities, Vision, Creativity, Valuing Ideas, Self-Awareness & Self-Efficacy, Motivation & Perseverance, Coping with Uncertainty, Learning through Experience, Ethical & Sustainable Thinking | Student picks up to 2 as "what's driving my assumption" (instinct sources). Excluded: the operational/resource cards (Mobilizing Resources, Financial Literacy, Planning & Management, Mobilizing Others, Working with Others, Taking the Initiative) — they describe execution, not belief-drivers |
-| 4 What Does This Venture Promise? | Entrepreneurial Dynamics | **8 cards mapped to promise categories:** Vision (aspiration), Creativity (novelty), Ethical & Sustainable Thinking (responsibility/trust), Planning & Management (reliability), Financial & Economic Literacy (value/control), Working with Others (belonging/partnership), Mobilizing Others (inspiration/community), Motivation & Perseverance (commitment/continuity) | Student picks 1 card = the promise the customer should feel; card name + category seed the rewritten headline |
+| 2 Are Your Customers Just Like You? | Family Dynamics + Entrepreneurial Dynamics + Succession Dynamics | **All 10 archetypes (self)** + **best-suited of the 15 ED cards (customer)** + **the agnostic 12 SD metaphors (customer)** | Pick 2 for the customer (1 metaphor, 1 entrepreneurial), 2 archetypes for self; customer/self contrast = projection signal |
+| 3 Assumption Dissonance Check | Entrepreneurial Dynamics + Succession Dynamics | **All 15 ED cards + the agnostic 12 SD metaphors** (Doc edit: full 15 replaces the earlier 9-card subset) | Student picks up to 2 as "what's driving my assumption" — 1 from each deck |
+| 4 What Does This Venture Promise? | Entrepreneurial Dynamics | **8 cards mapped to promise categories:** Vision (aspiration), Creativity (novelty), Ethical & Sustainable Thinking (responsibility/trust), Planning & Management (reliability), Financial & Economic Literacy (value/control), Working with Others (belonging/partnership), Mobilizing Others (inspiration/community), Motivation & Perseverance (commitment/continuity) | Student picks **2** cards = the promises the customer should feel, **ranks them with a short justification**; card names + categories seed the rewritten headline |
 | 5 Stakeholder Tension Map | Entrepreneurial Dynamics | **All 15 competences (metaphor-led)** | One metaphor card assigned per actor (Founder, Customer, Adviser, Investor) capturing their stance on the decision, then placed on the tension board |
-| 6 Where Are You a Risk? | Entrepreneurial Dynamics | **All 15 competences** | Pick 1 as current strength, 1 as overplayed strength (metaphor + situations frame the overuse risk), 1 as missing counterweight (competence gap = recruitable); xlsx situations feed the mitigation prompt and PDF |
-| 7 Would You Fund This? | Succession Dynamics | **Agnostic 12-card stress-test subset:** Sudden Departure (FR-12), Key Departure (RR-10), Hidden Agendas (VS-08), Communication Breakdown (CT-02), Information Blackout (CT-04), Micromanagement Mania (FR-08), Lingering Presence (FR-07), Overlapping Duties (RR-11), Ambiguous Hierarchies (RR-02), Missing Skills (SP-10), Reckless Decisions (SP-11), External Pressures (VS-04) | Draw 1 in the stress-test round; student estimates impact, then card's official scores revealed. Excluded: all family-specific cards (Family Feud, Founder vs. Family, Generational Clash, Legacy Traumas, etc.). Labels relabelled in-app: Harmony→Team harmony, Family→Relationships. Visuals from CARTES_NNHERIT.pdf; data from the checklist CSV |
+| 6 Where Are You a Risk? | Entrepreneurial Dynamics | **All 15 competences** | Pick 1 as current strength, 3 as overplayed strengths (metaphor + situations frame the overuse risk), 3 as missing counterweights (competence gap = recruitable) [check: Doc edit read as 1→3; confirm 3 is intended, it lengthens the activity]; xlsx situations feed the mitigation prompt and PDF |
+| 7 Would You Fund This? | Succession Dynamics | **Agnostic 12-card stress-test subset:** Sudden Departure (FR-12), Key Departure (RR-10), Hidden Agendas (VS-08), Communication Breakdown (CT-02), Information Blackout (CT-04), Micromanagement Mania (FR-08), Lingering Presence (FR-07), Overlapping Duties (RR-11), Ambiguous Hierarchies (RR-02), Missing Skills (SP-10), Reckless Decisions (SP-11), External Pressures (VS-04) | Draw 3 in the stress-test round; student estimates each card's impact, then official scores revealed. Excluded: all family-specific cards (Family Feud, Founder vs. Family, Generational Clash, Legacy Traumas, etc.). Labels relabelled in-app: Harmony→Team harmony, Family→Relationships. Visuals from CARTES_NNHERIT.pdf; data from the checklist CSV |
 
 Notes: Family Dynamics copy comes only from the Character Map (IP rule). Entrepreneurial Dynamics card fronts (icon + metaphor) come from the "EntreComp Final Cads 26-03-25" Drive folder; the situations in the xlsx feed the PDF interpretations. If the deck's final count is 45 not 15 (see open item), the App 3/4 subsets stay the same at competence level — sub-cards would just deepen the interpretation text.
 

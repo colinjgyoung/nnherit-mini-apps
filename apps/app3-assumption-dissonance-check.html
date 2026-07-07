@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assumption Dissonance Check — nnherit x BTE603</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --nn:#F3D600; --nn-dark:#d9c000;
+    --ink:#1a1a1a; --ink-soft:#5a5a5a; --ink-muted:#8a8a86;
+    --paper:#ffffff; --paper-warm:#faf9f4; --paper-shade:#f3f1e8;
+    --border:#e4e2d8; --border-strong:#cfccbf;
+    --ok:#46a24a; --radius:10px;
+    --font:'Source Sans Pro','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper-warm);color:var(--ink);font-family:var(--font);line-height:1.45;font-size:16px;}
+  .wrap{max-width:520px;margin:0 auto;padding:18px 16px 40px;}
+  header{border-bottom:4px solid var(--nn);padding:10px 0 10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  header .brand{font-weight:700;font-size:1.02rem;letter-spacing:.01em;}
+  header .mod{font-size:.78rem;color:var(--ink-soft);}
+  h1{font-size:1.32rem;margin:.2em 0 .35em;}
+  h2{font-size:1.08rem;margin:.2em 0 .4em;}
+  p{margin:.4em 0 .8em;}
+  .soft{color:var(--ink-soft);font-size:.92rem;}
+  .tiny{color:var(--ink-muted);font-size:.8rem;}
+  .screen{display:none;}
+  .screen.on{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  .steps{display:flex;gap:5px;margin:0 0 16px;}
+  .steps span{flex:1;height:5px;border-radius:3px;background:var(--border);}
+  .steps span.done{background:var(--nn);}
+  button{font-family:inherit;}
+  .btn{display:block;width:100%;padding:14px 16px;margin:10px 0 0;font-size:1rem;font-weight:600;
+       border-radius:var(--radius);border:1px solid var(--border-strong);background:var(--paper);
+       color:var(--ink);cursor:pointer;min-height:48px;text-align:center;}
+  .btn:active{transform:scale(.99);}
+  .btn.primary{background:var(--nn);border-color:var(--nn-dark);}
+  .btn.quiet{background:transparent;border-color:transparent;color:var(--ink-soft);font-weight:400;text-decoration:underline;min-height:40px;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  input[type=text],select,textarea{
+    width:100%;padding:13px 12px;font-size:1rem;font-family:inherit;border:1px solid var(--border-strong);
+    border-radius:var(--radius);background:var(--paper);color:var(--ink);}
+  input:focus,select:focus,textarea:focus,button:focus{outline:3px solid var(--nn);outline-offset:1px;}
+  label{display:block;font-weight:600;margin:14px 0 5px;}
+  label .opt{font-weight:400;color:var(--ink-muted);font-size:.85rem;}
+  .cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+  .fcard{position:relative;border:2px solid var(--border-strong);border-radius:var(--radius);background:var(--paper);
+    padding:12px 10px 10px;cursor:pointer;min-height:112px;display:flex;flex-direction:column;gap:4px;text-align:left;}
+  .fcard .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.18);}
+  .fcard .ph{font-weight:700;font-size:.95rem;line-height:1.2;}
+  .fcard .ar{font-size:.8rem;color:var(--ink-soft);}
+  .fcard.sel{border-color:var(--ink);background:#fdf7cf;}
+  .fcard.sel::after{content:"✓";position:absolute;top:6px;right:9px;font-weight:700;font-size:1.05rem;}
+  .fcard .info{position:absolute;bottom:6px;right:8px;border:1px solid var(--border-strong);background:var(--paper-shade);
+    border-radius:50%;width:30px;height:30px;font-size:.85rem;cursor:pointer;}
+  .counter{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;border-radius:20px;
+    padding:7px 14px;text-align:center;font-size:.9rem;margin:0 0 10px;}
+  .backpanel{border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--paper-shade);
+    padding:12px 14px;margin:10px 0;}
+  .backpanel h3{margin:.1em 0 .3em;font-size:1rem;}
+  .seg{display:flex;gap:8px;margin:6px 0 2px;}
+  .seg button{flex:1;padding:11px 6px;border:1px solid var(--border-strong);border-radius:var(--radius);
+    background:var(--paper);cursor:pointer;font-size:.9rem;min-height:44px;}
+  .seg button.sel{background:var(--nn);border-color:var(--nn-dark);font-weight:700;}
+  .assumebox{border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--paper);
+    padding:10px 12px;margin:10px 0;font-size:.93rem;}
+  .assumebox .num{font-weight:700;color:var(--ink-soft);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;}
+  .radio-list label{font-weight:400;margin:0 0 8px;border:1px solid var(--border-strong);border-radius:var(--radius);
+    padding:12px 12px;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:10px;}
+  .radio-list input{width:auto;}
+  .radio-list label.sel{background:var(--nn);border-color:var(--nn-dark);font-weight:600;}
+  .takeaway{border:2px solid var(--nn);border-radius:var(--radius);background:var(--paper);padding:14px 16px;margin:12px 0;}
+  .takeaway .rk{font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+  .takeaway h3{margin:.05em 0 .15em;font-size:1.06rem;}
+  .takeaway p{margin:.25em 0;font-size:.93rem;}
+  .chip{display:inline-block;border-radius:12px;padding:2px 10px;font-size:.8rem;font-weight:700;margin-left:6px;}
+  .chip.aligned{background:#e2f2e3;color:#2c6b2f;}
+  .chip.misaligned{background:#fbe3e6;color:#a12433;}
+  .chip.unproven{background:var(--paper-shade);color:var(--ink-soft);}
+  .notice{border-left:4px solid var(--nn);background:var(--paper-shade);padding:10px 12px;border-radius:0 var(--radius) var(--radius) 0;margin:12px 0;font-size:.92rem;}
+  .idbox{font-family:monospace;background:var(--ink);color:#fff;padding:8px 12px;border-radius:8px;display:inline-block;letter-spacing:.08em;}
+  table.fac{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0;}
+  table.fac th,table.fac td{border:1px solid var(--border-strong);padding:6px 8px;text-align:left;}
+  table.fac th{background:var(--paper-shade);}
+  .charcount{text-align:right;font-size:.78rem;color:var(--ink-muted);margin-top:3px;}
+  footer{margin-top:26px;text-align:center;}
+  footer .tiny{display:block;}
+  a{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="brand">nnherit</span>
+    <span class="mod">BTE603 · Week 5 · Assumption Dissonance Check</span>
+  </header>
+
+  <div class="steps" id="steps" hidden>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- 0 JOIN -->
+  <section class="screen on" id="s-join">
+    <h1>Assumption Dissonance Check</h1>
+    <p>A short seminar activity — about 12 minutes. It is here to help you separate what you believe about your customers from what you actually know. It does not label you and it does not affect your marks.</p>
+    <label for="code">Session code <span class="opt">(shown on the seminar screen)</span></label>
+    <input type="text" id="code" inputmode="text" autocomplete="off" maxlength="12" placeholder="e.g. WK5-A">
+    <button class="btn primary" id="b-join">Join session</button>
+    <p class="tiny" style="margin-top:14px;">Anonymous by default. No names required.</p>
+    <button class="btn quiet" id="b-fac">Facilitator view</button>
+  </section>
+
+  <!-- 1 CONSENT -->
+  <section class="screen" id="s-consent">
+    <h2>Before you start</h2>
+    <p>This short activity is part of normal seminar learning. If you opt in, anonymous interaction data from your choices may be used to improve the teaching activity and nnherit's product design. Your participation or non-participation will not affect marks, feedback, or standing in the module. Do not enter your name or contact details. You can skip, participate without data capture, or withdraw later using the code shown at the end.</p>
+    <p class="soft">If you opt in, this activity will record your three assumption statements, which driver cards you pick, your evidence labels, and your chosen next test.</p>
+    <button class="btn primary" id="b-optin">Opt in and continue</button>
+    <button class="btn" id="b-nocapture">Continue without data capture</button>
+    <button class="btn quiet" id="b-skip">Skip this activity</button>
+  </section>
+
+  <!-- SKIPPED -->
+  <section class="screen" id="s-skipped">
+    <h2>No problem</h2>
+    <p>You can continue the seminar without the app. This is normal and fully fine. If you change your mind, reload this page.</p>
+  </section>
+
+  <!-- 2 ASSUMPTIONS -->
+  <section class="screen" id="s-assume">
+    <h2>Write three assumptions</h2>
+    <p class="soft">Three things your venture currently takes for granted — about your customers, your market, or your offer. Plain statements, one line each.</p>
+    <label for="as1">Assumption 1</label>
+    <textarea id="as1" rows="2" maxlength="140" placeholder="e.g. students will pay monthly for this"></textarea>
+    <div class="charcount"><span id="cc1">0</span>/140</div>
+    <label for="as2">Assumption 2 <span class="opt">(aim for all three)</span></label>
+    <textarea id="as2" rows="2" maxlength="140" placeholder="e.g. the main competitor is too expensive for them"></textarea>
+    <div class="charcount"><span id="cc2">0</span>/140</div>
+    <label for="as3">Assumption 3 <span class="opt">(aim for all three)</span></label>
+    <textarea id="as3" rows="2" maxlength="140" placeholder="e.g. word of mouth will be our main channel"></textarea>
+    <div class="charcount"><span id="cc3">0</span>/140</div>
+    <button class="btn primary" id="b-assume" disabled>Continue</button>
+  </section>
+
+  <!-- 3 DRIVER CARDS -->
+  <section class="screen" id="s-drivers">
+    <div class="counter" id="drvcount">Pick up to 2 — 1 from each set</div>
+    <h2>What's driving these assumptions?</h2>
+    <p class="soft">Assumptions come from somewhere. Pick <strong>1</strong> card from each set that best matches what is behind your thinking. Tap the ⓘ to read more.</p>
+    <h2 style="font-size:.95rem;margin-top:16px;">The instinct behind it</h2>
+    <div class="cardgrid" id="edgrid"></div>
+    <div id="edback"></div>
+    <h2 style="font-size:.95rem;margin-top:16px;">The situation you're bracing for</h2>
+    <div class="cardgrid" id="sdgrid"></div>
+    <div id="sdback"></div>
+    <button class="btn primary" id="b-drivers" disabled>Continue</button>
+  </section>
+
+  <!-- 4 EVIDENCE STATUS -->
+  <section class="screen" id="s-status">
+    <h2>Label the evidence</h2>
+    <p class="soft">Hold each assumption against what your cards say is driving you. Is it aligned with what you actually know, misaligned with it, or simply unproven?</p>
+    <div id="statuslist"></div>
+    <button class="btn primary" id="b-status" disabled>Continue</button>
+  </section>
+
+  <!-- 5 NEXT TEST -->
+  <section class="screen" id="s-test">
+    <h2>Pick one concrete next test</h2>
+    <p class="soft">One test you could realistically run before the next seminar.</p>
+    <div class="radio-list" id="testlist">
+      <label><input type="radio" name="test" value="interview">Customer interviews (3–5 short conversations)</label>
+      <label><input type="radio" name="test" value="landing page">Landing page with a sign-up or click test</label>
+      <label><input type="radio" name="test" value="competitor scan">Competitor scan (who solves this today, and how)</label>
+      <label><input type="radio" name="test" value="survey">Short survey to the target group</label>
+      <label><input type="radio" name="test" value="prototype">Prototype or mock-up reaction test</label>
+      <label><input type="radio" name="test" value="other">Other</label>
+    </div>
+    <div id="otherbox" hidden>
+      <label for="testother">Your test</label>
+      <input type="text" id="testother" maxlength="80" placeholder="describe it in a few words">
+    </div>
+    <label for="testtarget">Which assumption does it test first?</label>
+    <select id="testtarget">
+      <option value="">Choose…</option>
+    </select>
+    <button class="btn primary" id="b-test" disabled>Continue</button>
+  </section>
+
+  <!-- 6 DONE -->
+  <section class="screen" id="s-done">
+    <h2>Your assumptions, labelled</h2>
+    <p class="soft">A reflection, not a result. Here is what you wrote, what you said is driving it, and the test that turns belief into evidence.</p>
+    <div id="takeaways"></div>
+    <div class="notice" id="peerprompt"><strong>Now turn to a partner.</strong> Read them your most unproven assumption. Would they bet on it? Two minutes.</div>
+    <button class="btn primary" id="b-pdf">Download my results (PDF)</button>
+    <button class="btn" id="b-submit">Submit and finish</button>
+    <div id="afterword" hidden>
+      <p style="margin-top:16px;"><strong>Done — thank you.</strong></p>
+      <p class="soft">To withdraw your data later, give this code to your facilitator:</p>
+      <p><span class="idbox" id="ridbox"></span></p>
+    </div>
+  </section>
+
+  <!-- FACILITATOR -->
+  <section class="screen" id="s-facil">
+    <h2>Facilitator view</h2>
+    <div id="fac-locked">
+      <label for="faccode">Facilitator code</label>
+      <input type="text" id="faccode" autocomplete="off">
+      <button class="btn primary" id="b-facunlock">Open</button>
+    </div>
+    <div id="fac-open" hidden>
+      <p class="soft">Submissions stored on <strong>this device</strong> are listed below. When the Google Sheet endpoint is connected, all phones in the session send their results there — the sheet is the full session view.</p>
+      <div id="fac-summary"></div>
+      <button class="btn" id="b-faccsv">Download this device's data (CSV)</button>
+      <button class="btn quiet" id="b-facback">Back to start</button>
+    </div>
+  </section>
+
+  <footer>
+    <span class="tiny">Assumption Dissonance Check · a structured reflection tool by nnherit · nnherit.com</span>
+    <span class="tiny">Anonymous by default · withdrawal as easy as opting in</span>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ================= CONFIG (edit these) ================= */
+const CONFIG = {
+  ENDPOINT: 'https://script.google.com/macros/s/AKfycbxW0HYD0RBAjswNnoNUVGx1jgcPxKaVq5fzZbKU9sUDpU-d0rVmXHDl2ysVE1PdaoeI5Q/exec',
+  FACILITATOR_CODE: 'nnherit-fac',
+  ACTIVITY_ID: 'app3-assumption-dissonance-check',
+  CONSENT_VERSION: 'v1-2026-07-07'
+};
+
+/* ============ CARD DATA ============ */
+/* Entrepreneurial Dynamics — all 15 competences, similes verbatim from
+   docs/card-content-entrepreneurial-dynamics.md */
+const COMPETENCES = [
+  { id:1,  colour:'#1B4D3E', name:'Spotting Opportunities', similes:['Like finding a diamond in the rough','Like discovering a hidden shortcut','Like finding money in an old coat pocket'] },
+  { id:2,  colour:'#E8720C', name:'Creativity', similes:['Like making something out of nothing','Like mixing ingredients to create a new dish','Like building a castle in the sand'] },
+  { id:3,  colour:'#4FC3E0', name:'Vision', similes:['Like plotting stars to navigate uncharted seas','Like imagining a city in an empty field','Like imagining a seed grow into a forest'] },
+  { id:4,  colour:'#F0C808', name:'Valuing Ideas', similes:['Like examining a treasure map for hidden value','Like spotting gold in a pile of rocks','Like selecting the key pieces in a jigsaw puzzle'] },
+  { id:5,  colour:'#1F3A93', name:'Ethical & Sustainable Thinking', similes:['Like planting a tree for the next generation','Like choosing a path through a fragile forest'] },
+  { id:6,  colour:'#7B3F99', name:'Self-Awareness & Self-Efficacy', similes:['Like looking into a mirror and seeing your potential','Like testing yourself in a safe space','Like climbing a mountain to discover yourself'] },
+  { id:7,  colour:'#E85D9E', name:'Motivation & Perseverance', similes:['Like running a marathon in a storm','Like pushing a broken-down car uphill'] },
+  { id:8,  colour:'#D7263D', name:'Mobilizing Resources', similes:['Like gathering wood to build a fire','Like using only the ingredients you have to cook a meal for everyone','Like finding puzzle pieces to complete the picture'] },
+  { id:9,  colour:'#8BC34A', name:'Financial & Economic Literacy', similes:['Like packing a suitcase with strict weight limits','Like planning a road trip on a tight budget','Like stretching a meal to last the whole week'] },
+  { id:10, colour:'#9E9E98', name:'Mobilizing Others', similes:['Like lighting a spark to ignite a fire','Like inviting friends to a celebration','Like a magnet drawing others together'] },
+  { id:11, colour:'#00897B', name:'Taking the Initiative', similes:['Like stepping into the breach — a tough situation','Like diving into a pool before testing the water','Like being the first onto the dance floor'] },
+  { id:12, colour:'#5D4037', name:'Planning & Management', similes:['Like setting up dominoes so they all fall perfectly in sequence','Like choreographing a dance where every step must sync perfectly with the music'] },
+  { id:13, colour:'#455A64', name:'Coping with Uncertainty, Ambiguity & Risk', similes:['Like walking through fog without a flashlight','Like playing a game of cards blindfolded','Like sketching the first lines of a masterpiece'] },
+  { id:14, colour:'#EF6C00', name:'Working with Others', similes:['Like a rowing team pulling in unison to win the race','Like a beehive where every bee has a job, but the hive only thrives when they work together'] },
+  { id:15, colour:'#3949AB', name:'Learning through Experience', similes:['Like falling and learning to stand again','Like stumbling mid-race, then finding your stride','Like baking without a recipe'] }
+];
+
+/* Succession Dynamics — agnostic 12-card subset (names from
+   Succession_Dynamics_Card_Checklist.csv). One-line framings are app-only
+   wording written for this activity — not deck copy. */
+const METAPHORS = [
+  { id:'FR-12', name:'Sudden Departure',        frame:'Someone central leaves overnight, and the gap shows immediately.' },
+  { id:'RR-10', name:'Key Departure',           frame:'A person everything quietly depended on moves on.' },
+  { id:'VS-08', name:'Hidden Agendas',          frame:'People say one thing in the room and want another outside it.' },
+  { id:'CT-02', name:'Communication Breakdown', frame:'Messages stop landing; everyone works from a different story.' },
+  { id:'CT-04', name:'Information Blackout',    frame:'Decisions happen, but the information never reaches the people affected.' },
+  { id:'FR-08', name:'Micromanagement Mania',   frame:'Every small decision has to pass through one pair of hands.' },
+  { id:'FR-07', name:'Lingering Presence',      frame:'The old way of doing things stays in the room after it should have left.' },
+  { id:'RR-11', name:'Overlapping Duties',      frame:'Two people believe the same job is theirs.' },
+  { id:'RR-02', name:'Ambiguous Hierarchies',   frame:'Nobody is sure who actually decides.' },
+  { id:'SP-10', name:'Missing Skills',          frame:'The task is clear; the capability for it isn’t there yet.' },
+  { id:'SP-11', name:'Reckless Decisions',      frame:'Big moves get made faster than the thinking behind them.' },
+  { id:'VS-04', name:'External Pressures',      frame:'Forces outside the team set the pace and the terms.' }
+];
+
+const STATUSES = ['Aligned','Misaligned','Unproven'];
+const TEST_LABELS = {
+  'interview':'customer interviews', 'landing page':'a landing page test',
+  'competitor scan':'a competitor scan', 'survey':'a short survey',
+  'prototype':'a prototype reaction test', 'other':'your own test'
+};
+
+/* ================= STATE ================= */
+const state = {
+  session:'', consent:null,
+  assumptions:['','',''],
+  statuses:[null,null,null],
+  driverED:null, driverSD:null,
+  nextTest:null, nextTestOther:'', testTarget:null,
+  revisions:0, started:null, responseId:null, submitted:false
+};
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const SCREENS = ['#s-join','#s-consent','#s-assume','#s-drivers','#s-status','#s-test','#s-done'];
+function show(id){
+  $$('.screen').forEach(el=>el.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo({top:0});
+  const stepIdx = SCREENS.indexOf(id);
+  $('#steps').hidden = stepIdx < 1;
+  if(stepIdx>=1){ $$('#steps span').forEach((sp,i)=>sp.classList.toggle('done', i < stepIdx)); }
+}
+function rid(){ return 'R-' + Math.random().toString(36).slice(2,7).toUpperCase(); }
+function esc(t){ const d=document.createElement('div'); d.textContent=t??''; return d.innerHTML; }
+
+/* ================= JOIN ================= */
+$('#b-join').onclick = () => {
+  const c = $('#code').value.trim().toUpperCase();
+  if(!c){ $('#code').focus(); return; }
+  state.session = c;
+  show('#s-consent');
+};
+$('#b-fac').onclick = () => show('#s-facil');
+
+/* ================= CONSENT ================= */
+$('#b-optin').onclick   = () => { state.consent='optin';     begin(); };
+$('#b-nocapture').onclick = () => { state.consent='nocapture'; begin(); };
+$('#b-skip').onclick    = () => { state.consent='skipped';   show('#s-skipped'); };
+function begin(){
+  state.started = Date.now();
+  state.responseId = rid();
+  show('#s-assume');
+}
+
+/* ================= ASSUMPTIONS ================= */
+[['#as1','#cc1'],['#as2','#cc2'],['#as3','#cc3']].forEach(([sel,cc])=>{
+  $(sel).addEventListener('input', e=>{
+    $(cc).textContent = e.target.value.length;
+    $('#b-assume').disabled = $('#as1').value.trim().length < 3;
+  });
+});
+$('#b-assume').onclick = () => {
+  state.assumptions = [$('#as1').value.trim(), $('#as2').value.trim(), $('#as3').value.trim()];
+  renderDrivers();
+  show('#s-drivers');
+};
+
+/* ================= DRIVER CARDS ================= */
+function renderPicker(gridSel, items, opts){
+  const g = $(gridSel); g.innerHTML='';
+  items.forEach(c=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='fcard'; b.dataset.id=c.id;
+    const sub = opts.sub(c);
+    b.innerHTML = `<span class="dot" style="background:${c.colour||'#1a1a1a'}"></span>
+      <span class="ph">${esc(opts.title(c))}</span>${sub?`<span class="ar">${esc(sub)}</span>`:''}
+      <span class="info" role="button" aria-label="About ${esc(opts.title(c))}" data-info="${c.id}">ⓘ</span>`;
+    b.onclick = (ev)=>{
+      if(ev.target.dataset && ev.target.dataset.info){ opts.showBack(c); return; }
+      opts.toggle(c);
+    };
+    if(opts.isSel(c)) b.classList.add('sel');
+    g.appendChild(b);
+  });
+}
+function renderDrivers(){
+  renderPicker('#edgrid', COMPETENCES, {
+    title:c=>c.name, sub:c=>c.similes[0],
+    isSel:c=>state.driverED===c.id,
+    showBack:c=>{ $('#edback').innerHTML = `<div class="backpanel" role="note">
+        <h3>${esc(c.name)}</h3>${c.similes.map(s=>`<p style="margin:.3em 0 0;">${esc(s)}</p>`).join('')}</div>`;
+      $('#edback').scrollIntoView({behavior:'smooth',block:'nearest'}); },
+    toggle:(c)=>{
+      if(state.driverED===c.id){ state.driverED=null; state.revisions++; }
+      else { if(state.driverED!==null) state.revisions++; state.driverED=c.id; }
+      renderDrivers();
+    }
+  });
+  renderPicker('#sdgrid', METAPHORS, {
+    title:c=>c.name, sub:()=>'',
+    isSel:c=>state.driverSD===c.id,
+    showBack:c=>{ $('#sdback').innerHTML = `<div class="backpanel" role="note">
+        <h3>${esc(c.name)}</h3><p style="margin:.3em 0 0;">${esc(c.frame)}</p></div>`;
+      $('#sdback').scrollIntoView({behavior:'smooth',block:'nearest'}); },
+    toggle:(c)=>{
+      if(state.driverSD===c.id){ state.driverSD=null; state.revisions++; }
+      else { if(state.driverSD!==null) state.revisions++; state.driverSD=c.id; }
+      renderDrivers();
+    }
+  });
+  updateDrvCount();
+}
+function updateDrvCount(){
+  const n = (state.driverED?1:0) + (state.driverSD?1:0);
+  $('#drvcount').textContent = n===0 ? 'Pick up to 2 — 1 from each set' : `${n} of 2 picked`;
+  $('#b-drivers').disabled = n===0;
+}
+$('#b-drivers').onclick = () => { renderStatus(); show('#s-status'); };
+
+/* ================= EVIDENCE STATUS ================= */
+function renderStatus(){
+  const box = $('#statuslist'); box.innerHTML='';
+  state.assumptions.forEach((a,i)=>{
+    if(!a) return;
+    const div = document.createElement('div'); div.className='assumebox';
+    div.innerHTML = `<span class="num">Assumption ${i+1}</span><p style="margin:.2em 0 .5em;">${esc(a)}</p>
+      <div class="seg" data-idx="${i}">
+        ${STATUSES.map(s=>`<button type="button" data-status="${s}" ${state.statuses[i]===s?'class="sel"':''}>${s}</button>`).join('')}
+      </div>`;
+    box.appendChild(div);
+  });
+  box.querySelectorAll('.seg button').forEach(b=>{
+    b.onclick = ()=>{
+      const idx = +b.parentElement.dataset.idx;
+      if(state.statuses[idx] && state.statuses[idx]!==b.dataset.status) state.revisions++;
+      state.statuses[idx] = b.dataset.status;
+      renderStatus();
+    };
+  });
+  const need = state.assumptions.map((a,i)=>a?i:null).filter(i=>i!==null);
+  $('#b-status').disabled = !need.every(i=>state.statuses[i]);
+}
+$('#b-status').onclick = () => { renderTestTargets(); show('#s-test'); };
+
+/* ================= NEXT TEST ================= */
+function renderTestTargets(){
+  const sel = $('#testtarget');
+  sel.innerHTML = '<option value="">Choose…</option>' +
+    state.assumptions.map((a,i)=>a?`<option value="${i+1}">Assumption ${i+1} — ${esc(a.slice(0,50))}${a.length>50?'…':''}</option>`:'').join('');
+}
+$('#testlist').addEventListener('change', e=>{
+  $$('#testlist label').forEach(l=>l.classList.toggle('sel', l.querySelector('input').checked));
+  $('#otherbox').hidden = e.target.value!=='other';
+  updateTestBtn();
+});
+$('#testtarget').addEventListener('change', updateTestBtn);
+function updateTestBtn(){
+  const t = (document.querySelector('input[name=test]:checked')||{}).value;
+  $('#b-test').disabled = !t || !$('#testtarget').value;
+}
+$('#b-test').onclick = () => {
+  state.nextTest = (document.querySelector('input[name=test]:checked')||{}).value || null;
+  state.nextTestOther = $('#testother').value.trim();
+  state.testTarget = +$('#testtarget').value || null;
+  finish();
+};
+
+/* ================= DONE ================= */
+function finish(){
+  const ed = COMPETENCES.find(c=>c.id===state.driverED);
+  const sd = METAPHORS.find(m=>m.id===state.driverSD);
+  const counts = {Aligned:0, Misaligned:0, Unproven:0};
+  state.assumptions.forEach((a,i)=>{ if(a && state.statuses[i]) counts[state.statuses[i]]++; });
+  let reflect;
+  if(counts.Unproven >= 2) reflect = 'Most of your assumptions are unproven. That is normal at this stage — the difference between a guess and a plan is which one gets tested first.';
+  else if(counts.Misaligned >= 1) reflect = 'You found a misalignment between what drives you and what you assume about customers. Noticing it now, before you build on it, is the whole point of this exercise.';
+  else reflect = 'Your assumptions came out mostly aligned. Worth one honest check: aligned with evidence, or aligned with what you want to be true? The test will tell you.';
+  const testLabel = state.nextTest==='other' && state.nextTestOther ? state.nextTestOther : TEST_LABELS[state.nextTest] || '';
+  const tw = $('#takeaways');
+  tw.innerHTML = `
+    <div class="takeaway">
+      <span class="rk">Your assumptions</span>
+      ${state.assumptions.map((a,i)=>a?`<p>${i+1}. ${esc(a)}<span class="chip ${state.statuses[i].toLowerCase()}">${state.statuses[i]}</span></p>`:'').join('')}
+    </div>
+    <div class="takeaway">
+      <span class="rk">What's driving them</span>
+      ${ed?`<h3>${esc(ed.name)}</h3><p>${esc(ed.similes[0])}</p>`:''}
+      ${sd?`<h3>${esc(sd.name)}</h3><p>${esc(sd.frame)}</p>`:''}
+    </div>
+    <div class="takeaway">
+      <span class="rk">Your next test</span>
+      <p>${esc(testLabel.charAt(0).toUpperCase()+testLabel.slice(1))}${state.testTarget?` — aimed at assumption ${state.testTarget}`:''}.</p>
+      <p>${esc(reflect)}</p>
+    </div>`;
+  $('#b-submit').textContent = state.consent==='optin' ? 'Submit and finish' : 'Finish (nothing is sent)';
+  show('#s-done');
+}
+
+/* ================= PDF ================= */
+$('#b-pdf').onclick = () => {
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    const W = 210, M = 18; let y = 20;
+    const put = (t, size, style, gap) => {
+      doc.setFont('helvetica', style||'normal'); doc.setFontSize(size);
+      const lines = doc.splitTextToSize(t, W - 2*M);
+      lines.forEach(ln=>{ if(y>275){ doc.addPage(); y=20; } doc.text(ln, M, y); y += (size*0.45); });
+      y += (gap??3);
+    };
+    const ed = COMPETENCES.find(c=>c.id===state.driverED);
+    const sd = METAPHORS.find(m=>m.id===state.driverSD);
+    const testLabel = state.nextTest==='other' && state.nextTestOther ? state.nextTestOther : TEST_LABELS[state.nextTest] || '';
+    doc.setFillColor(243,214,0); doc.rect(0,0,W,12,'F');
+    put('Assumption Dissonance Check — your reflection', 16, 'bold', 4);
+    put(`BTE603 seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
+    put('Your assumptions', 12, 'bold', 1);
+    state.assumptions.forEach((a,i)=>{
+      if(a) put(`${i+1}. ${a} — ${state.statuses[i]}`, 10, 'normal', 1);
+    });
+    y += 3;
+    put(`What's driving them`, 12, 'bold', 1);
+    if(ed) put(`The instinct: "${ed.name}" — ${ed.similes[0]}`, 10, 'normal', 1);
+    if(sd) put(`The situation you're bracing for: "${sd.name}" — ${sd.frame}`, 10, 'normal', 3);
+    put('Your next test', 12, 'bold', 1);
+    put(`${testLabel.charAt(0).toUpperCase()+testLabel.slice(1)}${state.testTarget?` — aimed at assumption ${state.testTarget}`:''}`, 10, 'normal', 5);
+    put('How to read this: the labels are your own judgement of your own statements today — a reflection prompt, not a verdict. An unproven assumption is not a weakness; building on it without testing is. Run the test, then relabel.', 9, 'italic', 4);
+    put('Assumption Dissonance Check is a structured reflection tool by nnherit · nnherit.com', 8, 'normal', 0);
+    doc.save('assumption-dissonance-check.pdf');
+  }catch(err){
+    alert('PDF download is not available on this connection — take a screenshot of your results instead.');
+  }
+};
+
+/* ================= SUBMIT ================= */
+function payload(){
+  const ed = COMPETENCES.find(c=>c.id===state.driverED);
+  const sd = METAPHORS.find(m=>m.id===state.driverSD);
+  return {
+    v:1, activity:CONFIG.ACTIVITY_ID, consentVersion:CONFIG.CONSENT_VERSION,
+    session:state.session, responseId:state.responseId, ts:new Date().toISOString(),
+    consent:state.consent,
+    cardsRanked: [ ed?ed.name:'', sd?sd.name:'', state.nextTest||'' ],
+    assumptions: state.assumptions,
+    statuses: state.statuses,
+    driverCompetence: ed?ed.name:null,
+    driverMetaphor: sd?{id:sd.id,name:sd.name}:null,
+    nextTest: state.nextTest, nextTestOther: state.nextTestOther, testTarget: state.testTarget,
+    revisions: state.revisions,
+    secondsOnTask: Math.round((Date.now()-state.started)/1000)
+  };
+}
+$('#b-submit').onclick = () => {
+  if(state.submitted) return;
+  state.submitted = true;
+  $('#b-submit').disabled = true;
+  $('#ridbox').textContent = state.responseId;
+  $('#afterword').hidden = false;
+  $('#peerprompt').scrollIntoView({behavior:'smooth'});
+  if(state.consent==='optin'){
+    const p = payload();
+    try{
+      const log = JSON.parse(localStorage.getItem('nnherit-app3-log')||'[]');
+      log.push(p); localStorage.setItem('nnherit-app3-log', JSON.stringify(log));
+    }catch(e){}
+    if(CONFIG.ENDPOINT){
+      // fire-and-forget: never keep the student waiting on seminar wifi
+      try{ fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}).catch(()=>{}); }
+      catch(e){}
+    }
+  }
+};
+
+/* ================= FACILITATOR ================= */
+$('#b-facunlock').onclick = () => {
+  if($('#faccode').value.trim() !== CONFIG.FACILITATOR_CODE){ $('#faccode').value=''; $('#faccode').placeholder='Wrong code'; return; }
+  $('#fac-locked').hidden = true; $('#fac-open').hidden = false;
+  renderFac();
+};
+function countTable(title, counts){
+  const rows = Object.entries(counts).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+  return `<table class="fac"><thead><tr><th>${title}</th><th>#</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function renderFac(){
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app3-log')||'[]'); }catch(e){}
+  if(!log.length){ $('#fac-summary').innerHTML = '<p class="soft">No submissions stored on this device yet.</p>'; return; }
+  const statuses={Aligned:0,Misaligned:0,Unproven:0}, eds={}, sds={}, tests={};
+  log.forEach(r=>{
+    (r.statuses||[]).forEach(s=>{ if(s) statuses[s]=(statuses[s]||0)+1; });
+    if(r.driverCompetence) eds[esc(r.driverCompetence)]=(eds[esc(r.driverCompetence)]||0)+1;
+    if(r.driverMetaphor) sds[esc(r.driverMetaphor.name)]=(sds[esc(r.driverMetaphor.name)]||0)+1;
+    if(r.nextTest) tests[esc(r.nextTest)]=(tests[esc(r.nextTest)]||0)+1;
+  });
+  $('#fac-summary').innerHTML = `<p><strong>${log.length}</strong> submission(s) on this device.</p>
+    ${countTable('Evidence label (all assumptions)', statuses)}
+    ${countTable('Driver — instinct', eds)}
+    ${countTable('Driver — situation', sds)}
+    ${countTable('Next test', tests)}`;
+}
+$('#b-faccsv').onclick = () => {
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app3-log')||'[]'); }catch(e){}
+  const head = ['ts','session','responseId','consent','assumption1','status1','assumption2','status2','assumption3','status3','driverCompetence','driverMetaphor','nextTest','nextTestOther','testTarget','revisions','secondsOnTask'];
+  const lines = [head.join(',')].concat(log.map(r=>{
+    const a=r.assumptions||[], s=r.statuses||[];
+    const f = v => `"${String(v??'').replace(/"/g,'""')}"`;
+    return [r.ts,r.session,r.responseId,r.consent,
+      a[0],s[0],a[1],s[1],a[2],s[2],
+      r.driverCompetence, r.driverMetaphor?r.driverMetaphor.name:'',
+      r.nextTest, r.nextTestOther, r.testTarget,
+      r.revisions, r.secondsOnTask].map(f).join(',');
+  }));
+  const blob = new Blob([lines.join('\n')],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='nnherit-app3-session-data.csv'; a.click();
+};
+$('#b-facback').onclick = () => location.reload();
+</script>
+</body>
+</html>
