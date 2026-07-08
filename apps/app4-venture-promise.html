@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Does This Venture Promise? — nnherit x BTE603</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --nn:#F3D600; --nn-dark:#d9c000;
+    --ink:#1a1a1a; --ink-soft:#5a5a5a; --ink-muted:#8a8a86;
+    --paper:#ffffff; --paper-warm:#faf9f4; --paper-shade:#f3f1e8;
+    --border:#e4e2d8; --border-strong:#cfccbf;
+    --ok:#46a24a; --radius:10px;
+    --font:'Source Sans Pro','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper-warm);color:var(--ink);font-family:var(--font);line-height:1.45;font-size:16px;}
+  .wrap{max-width:520px;margin:0 auto;padding:18px 16px 40px;}
+  header{border-bottom:4px solid var(--nn);padding:10px 0 10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  header .brand{font-weight:700;font-size:1.02rem;letter-spacing:.01em;}
+  header .mod{font-size:.78rem;color:var(--ink-soft);}
+  h1{font-size:1.32rem;margin:.2em 0 .35em;}
+  h2{font-size:1.08rem;margin:.2em 0 .4em;}
+  p{margin:.4em 0 .8em;}
+  .soft{color:var(--ink-soft);font-size:.92rem;}
+  .tiny{color:var(--ink-muted);font-size:.8rem;}
+  .screen{display:none;}
+  .screen.on{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  .steps{display:flex;gap:5px;margin:0 0 16px;}
+  .steps span{flex:1;height:5px;border-radius:3px;background:var(--border);}
+  .steps span.done{background:var(--nn);}
+  button{font-family:inherit;}
+  .btn{display:block;width:100%;padding:14px 16px;margin:10px 0 0;font-size:1rem;font-weight:600;
+       border-radius:var(--radius);border:1px solid var(--border-strong);background:var(--paper);
+       color:var(--ink);cursor:pointer;min-height:48px;text-align:center;}
+  .btn:active{transform:scale(.99);}
+  .btn.primary{background:var(--nn);border-color:var(--nn-dark);}
+  .btn.quiet{background:transparent;border-color:transparent;color:var(--ink-soft);font-weight:400;text-decoration:underline;min-height:40px;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  input[type=text],select,textarea{
+    width:100%;padding:13px 12px;font-size:1rem;font-family:inherit;border:1px solid var(--border-strong);
+    border-radius:var(--radius);background:var(--paper);color:var(--ink);}
+  input:focus,select:focus,textarea:focus,button:focus{outline:3px solid var(--nn);outline-offset:1px;}
+  label{display:block;font-weight:600;margin:14px 0 5px;}
+  label .opt{font-weight:400;color:var(--ink-muted);font-size:.85rem;}
+  .cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+  .fcard{position:relative;border:2px solid var(--border-strong);border-radius:var(--radius);background:var(--paper);
+    padding:12px 10px 10px;cursor:pointer;min-height:112px;display:flex;flex-direction:column;gap:4px;text-align:left;}
+  .fcard .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.18);}
+  .fcard .ph{font-weight:700;font-size:.95rem;line-height:1.2;}
+  .fcard .ar{font-size:.8rem;color:var(--ink-soft);}
+  .fcard.sel{border-color:var(--ink);background:#fdf7cf;}
+  .fcard.sel::after{content:"✓";position:absolute;top:6px;right:9px;font-weight:700;font-size:1.05rem;}
+  .fcard .info{position:absolute;bottom:6px;right:8px;border:1px solid var(--border-strong);background:var(--paper-shade);
+    border-radius:50%;width:30px;height:30px;font-size:.85rem;cursor:pointer;}
+  .counter{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;border-radius:20px;
+    padding:7px 14px;text-align:center;font-size:.9rem;margin:0 0 10px;}
+  .backpanel{border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--paper-shade);
+    padding:12px 14px;margin:10px 0;}
+  .backpanel h3{margin:.1em 0 .3em;font-size:1rem;}
+  .ranklist{margin:12px 0;}
+  .rankrow{display:flex;align-items:center;gap:10px;border:1px solid var(--border-strong);border-radius:var(--radius);
+    background:var(--paper);padding:10px 12px;margin:8px 0;}
+  .rankrow .pos{font-weight:700;font-size:1.15rem;width:26px;text-align:center;}
+  .rankrow .nm{flex:1;}
+  .rankrow .nm .ph{font-weight:700;}
+  .rankrow .nm .ar{font-size:.82rem;color:var(--ink-soft);}
+  .rankrow .mv{display:flex;flex-direction:column;gap:4px;}
+  .rankrow .mv button{width:44px;height:34px;border-radius:8px;border:1px solid var(--border-strong);background:var(--paper-shade);font-size:1rem;cursor:pointer;}
+  .radio-list label{font-weight:400;margin:0 0 8px;border:1px solid var(--border-strong);border-radius:var(--radius);
+    padding:12px 12px;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:10px;}
+  .radio-list input{width:auto;}
+  .radio-list label.sel{background:var(--nn);border-color:var(--nn-dark);font-weight:600;}
+  .seg{display:flex;gap:8px;margin:6px 0 2px;}
+  .seg button{flex:1;padding:11px 6px;border:1px solid var(--border-strong);border-radius:var(--radius);
+    background:var(--paper);cursor:pointer;font-size:.9rem;min-height:44px;}
+  .seg button.sel{background:var(--nn);border-color:var(--nn-dark);font-weight:700;}
+  .linebox{border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--paper-shade);
+    padding:10px 12px;margin:10px 0;font-size:.95rem;}
+  .takeaway{border:2px solid var(--nn);border-radius:var(--radius);background:var(--paper);padding:14px 16px;margin:12px 0;}
+  .takeaway .rk{font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+  .takeaway h3{margin:.05em 0 .15em;font-size:1.06rem;}
+  .takeaway p{margin:.25em 0;font-size:.93rem;}
+  .notice{border-left:4px solid var(--nn);background:var(--paper-shade);padding:10px 12px;border-radius:0 var(--radius) var(--radius) 0;margin:12px 0;font-size:.92rem;}
+  .idbox{font-family:monospace;background:var(--ink);color:#fff;padding:8px 12px;border-radius:8px;display:inline-block;letter-spacing:.08em;}
+  table.fac{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0;}
+  table.fac th,table.fac td{border:1px solid var(--border-strong);padding:6px 8px;text-align:left;}
+  table.fac th{background:var(--paper-shade);}
+  .charcount{text-align:right;font-size:.78rem;color:var(--ink-muted);margin-top:3px;}
+  footer{margin-top:26px;text-align:center;}
+  footer .tiny{display:block;}
+  a{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="brand">nnherit</span>
+    <span class="mod">BTE603 · Week 7 · What Does This Venture Promise?</span>
+  </header>
+
+  <div class="steps" id="steps" hidden>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- 0 JOIN -->
+  <section class="screen on" id="s-join">
+    <h1>What Does This Venture Promise?</h1>
+    <p>A short seminar activity — about 12 minutes. It is here to help you find the promise behind your offer and say it so a customer would trust it. It does not label you and it does not affect your marks.</p>
+    <label for="code">Session code <span class="opt">(shown on the seminar screen)</span></label>
+    <input type="text" id="code" inputmode="text" autocomplete="off" maxlength="12" placeholder="e.g. WK7-A">
+    <button class="btn primary" id="b-join">Join session</button>
+    <p class="tiny" style="margin-top:14px;">Anonymous by default. No names required.</p>
+    <button class="btn quiet" id="b-fac">Facilitator view</button>
+  </section>
+
+  <!-- 1 CONSENT -->
+  <section class="screen" id="s-consent">
+    <h2>Before you start</h2>
+    <p>This short activity is part of normal seminar learning. If you opt in, anonymous interaction data from your choices may be used to improve the teaching activity and nnherit's product design. Your participation or non-participation will not affect marks, feedback, or standing in the module. Do not enter your name or contact details. You can skip, participate without data capture, or withdraw later using the code shown at the end.</p>
+    <p class="soft">If you opt in, this activity will record your one-line offers before and after, which promise cards you pick and how you rank them, your trust-cue choice, and the optional peer-vote answer.</p>
+    <button class="btn primary" id="b-optin">Opt in and continue</button>
+    <button class="btn" id="b-nocapture">Continue without data capture</button>
+    <button class="btn quiet" id="b-skip">Skip this activity</button>
+  </section>
+
+  <!-- SKIPPED -->
+  <section class="screen" id="s-skipped">
+    <h2>No problem</h2>
+    <p>You can continue the seminar without the app. This is normal and fully fine. If you change your mind, reload this page.</p>
+  </section>
+
+  <!-- 2 BEFORE -->
+  <section class="screen" id="s-before">
+    <h2>Your offer, as it stands</h2>
+    <p class="soft">Write your current one-line offer — the sentence you would put at the top of your landing page today. Imperfect is fine; that is the point.</p>
+    <label for="before">Current one-liner</label>
+    <textarea id="before" rows="3" maxlength="140" placeholder="e.g. An app that helps students eat better"></textarea>
+    <div class="charcount"><span id="cc-before">0</span>/140</div>
+    <button class="btn primary" id="b-before" disabled>Continue</button>
+  </section>
+
+  <!-- 3 PROMISE CARDS -->
+  <section class="screen" id="s-promise">
+    <div class="counter" id="promcount">Pick 2 cards — 0 of 2 selected</div>
+    <h2>What should your customer feel promised?</h2>
+    <p class="soft">Behind every offer is an emotional or trust promise. Tap the <strong>2</strong> cards closest to what your customer should feel when they read your line. Tap the ⓘ to read more.</p>
+    <div class="cardgrid" id="promgrid"></div>
+    <div id="promback"></div>
+    <button class="btn primary" id="b-promise" disabled>Continue with these 2</button>
+  </section>
+
+  <!-- 4 RANK + JUSTIFY -->
+  <section class="screen" id="s-rank">
+    <h2>Which promise leads?</h2>
+    <p class="soft">Put the promise your customer needs to feel <em>first</em> at position 1.</p>
+    <div class="ranklist" id="ranklist"></div>
+    <label for="whylead">Why does that one lead? <span class="opt">(one line)</span></label>
+    <textarea id="whylead" rows="2" maxlength="140" placeholder="e.g. nobody switches for novelty, they switch because they trust it will work"></textarea>
+    <div class="charcount"><span id="cc-why">0</span>/140</div>
+    <button class="btn primary" id="b-ranked">This order is right</button>
+  </section>
+
+  <!-- 5 REWRITE -->
+  <section class="screen" id="s-rewrite">
+    <h2>Rewrite the line</h2>
+    <p class="soft">Use the template to force the promise into the sentence, then edit your final line freely.</p>
+    <label for="t-need">For people who need…</label>
+    <input type="text" id="t-need" maxlength="60" placeholder="what they need">
+    <label for="t-help">…we help them…</label>
+    <input type="text" id="t-help" maxlength="60" placeholder="what you make possible">
+    <label for="t-without">…without…</label>
+    <input type="text" id="t-without" maxlength="60" placeholder="the pain they skip">
+    <div class="linebox" id="template-preview" hidden></div>
+    <label for="after">Your new one-liner</label>
+    <textarea id="after" rows="3" maxlength="140" placeholder="edit the assembled line, or write your own"></textarea>
+    <div class="charcount"><span id="cc-after">0</span>/140</div>
+    <label style="margin-top:18px;">What would make a stranger trust this line? <span class="opt">(pick one)</span></label>
+    <div class="radio-list" id="trustlist">
+      <label><input type="radio" name="trust" value="customer quote">A real customer quote</label>
+      <label><input type="radio" name="trust" value="numbers">Numbers — users, results, social proof</label>
+      <label><input type="radio" name="trust" value="guarantee">A guarantee or free trial</label>
+      <label><input type="radio" name="trust" value="transparent pricing">Transparent pricing</label>
+      <label><input type="radio" name="trust" value="credentials">Credentials or expertise on show</label>
+      <label><input type="radio" name="trust" value="demo">Seeing it work — demo or screenshots</label>
+    </div>
+    <button class="btn primary" id="b-rewrite" disabled>Continue</button>
+  </section>
+
+  <!-- 6 DONE -->
+  <section class="screen" id="s-done">
+    <h2>Before and after</h2>
+    <p class="soft">A reflection, not a result. Here is your line before and after — and the promise you decided it should carry.</p>
+    <div id="takeaways"></div>
+    <div class="notice"><strong>Now turn to a partner.</strong> Read them both lines without saying which is new. Ask: which would you trust more? Two minutes.</div>
+    <label style="margin-top:14px;">What did your partner say? <span class="opt">(optional)</span></label>
+    <div class="seg" id="peerseg">
+      <button type="button" data-vote="more trust">More trust</button>
+      <button type="button" data-vote="same">About the same</button>
+      <button type="button" data-vote="less trust">Less trust</button>
+    </div>
+    <button class="btn primary" id="b-pdf">Download my results (PDF)</button>
+    <button class="btn" id="b-submit">Submit and finish</button>
+    <div id="afterword" hidden>
+      <p style="margin-top:16px;"><strong>Done — thank you.</strong></p>
+      <p class="soft">To withdraw your data later, give this code to your facilitator:</p>
+      <p><span class="idbox" id="ridbox"></span></p>
+    </div>
+  </section>
+
+  <!-- FACILITATOR -->
+  <section class="screen" id="s-facil">
+    <h2>Facilitator view</h2>
+    <div id="fac-locked">
+      <label for="faccode">Facilitator code</label>
+      <input type="text" id="faccode" autocomplete="off">
+      <button class="btn primary" id="b-facunlock">Open</button>
+    </div>
+    <div id="fac-open" hidden>
+      <p class="soft">Submissions stored on <strong>this device</strong> are listed below. When the Google Sheet endpoint is connected, all phones in the session send their results there — the sheet is the full session view.</p>
+      <div id="fac-summary"></div>
+      <button class="btn" id="b-faccsv">Download this device's data (CSV)</button>
+      <button class="btn quiet" id="b-facback">Back to start</button>
+    </div>
+  </section>
+
+  <footer>
+    <span class="tiny">What Does This Venture Promise? · a structured reflection tool by nnherit · nnherit.com</span>
+    <span class="tiny">Anonymous by default · withdrawal as easy as opting in</span>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ================= CONFIG (edit these) ================= */
+const CONFIG = {
+  ENDPOINT: 'https://script.google.com/macros/s/AKfycbxW0HYD0RBAjswNnoNUVGx1jgcPxKaVq5fzZbKU9sUDpU-d0rVmXHDl2ysVE1PdaoeI5Q/exec',
+  FACILITATOR_CODE: 'nnherit-fac',
+  ACTIVITY_ID: 'app4-venture-promise',
+  CONSENT_VERSION: 'v1-2026-07-07'
+};
+
+/* ============ CARD DATA ============ */
+/* Entrepreneurial Dynamics — all 15 competences (same deck as Apps 2, 3, 5, 6).
+   Similes verbatim from docs/card-content-entrepreneurial-dynamics.md.
+   The `promise` fields are the planning doc's 8 promise-category mappings,
+   used as interpretation seeds; promise wording is app copy. */
+const CARDS = [
+  { id:1,  colour:'#1B4D3E', name:'Spotting Opportunities', similes:['Like finding a diamond in the rough','Like discovering a hidden shortcut','Like finding money in an old coat pocket'] },
+  { id:2,  colour:'#E8720C', name:'Creativity', promise:'novelty', promiseLine:'a promise of novelty — the customer should feel this is unlike anything they have tried', similes:['Like making something out of nothing','Like mixing ingredients to create a new dish','Like building a castle in the sand'] },
+  { id:3,  colour:'#4FC3E0', name:'Vision', promise:'aspiration', promiseLine:'a promise of aspiration — the customer should feel pulled toward something bigger', similes:['Like plotting stars to navigate uncharted seas','Like imagining a city in an empty field','Like imagining a seed grow into a forest'] },
+  { id:4,  colour:'#F0C808', name:'Valuing Ideas', similes:['Like examining a treasure map for hidden value','Like spotting gold in a pile of rocks','Like selecting the key pieces in a jigsaw puzzle'] },
+  { id:5,  colour:'#1F3A93', name:'Ethical & Sustainable Thinking', promise:'responsibility and trust', promiseLine:'a promise of responsibility — the customer should feel this is the right thing to choose', similes:['Like planting a tree for the next generation','Like choosing a path through a fragile forest'] },
+  { id:6,  colour:'#7B3F99', name:'Self-Awareness & Self-Efficacy', similes:['Like looking into a mirror and seeing your potential','Like testing yourself in a safe space','Like climbing a mountain to discover yourself'] },
+  { id:7,  colour:'#E85D9E', name:'Motivation & Perseverance', promise:'commitment and continuity', promiseLine:'a promise of commitment — the customer should feel you will still be there when it matters', similes:['Like running a marathon in a storm','Like pushing a broken-down car uphill'] },
+  { id:8,  colour:'#D7263D', name:'Mobilizing Resources', similes:['Like gathering wood to build a fire','Like using only the ingredients you have to cook a meal for everyone','Like finding puzzle pieces to complete the picture'] },
+  { id:9,  colour:'#8BC34A', name:'Financial & Economic Literacy', promise:'value and control', promiseLine:'a promise of value and control — the customer should feel their money and effort are respected', similes:['Like packing a suitcase with strict weight limits','Like planning a road trip on a tight budget','Like stretching a meal to last the whole week'] },
+  { id:10, colour:'#9E9E98', name:'Mobilizing Others', promise:'inspiration and community', promiseLine:'a promise of community — the customer should feel part of something moving', similes:['Like lighting a spark to ignite a fire','Like inviting friends to a celebration','Like a magnet drawing others together'] },
+  { id:11, colour:'#00897B', name:'Taking the Initiative', similes:['Like stepping into the breach — a tough situation','Like diving into a pool before testing the water','Like being the first onto the dance floor'] },
+  { id:12, colour:'#5D4037', name:'Planning & Management', promise:'reliability', promiseLine:'a promise of reliability — the customer should feel it will simply work, every time', similes:['Like setting up dominoes so they all fall perfectly in sequence','Like choreographing a dance where every step must sync perfectly with the music'] },
+  { id:13, colour:'#455A64', name:'Coping with Uncertainty, Ambiguity & Risk', similes:['Like walking through fog without a flashlight','Like playing a game of cards blindfolded','Like sketching the first lines of a masterpiece'] },
+  { id:14, colour:'#EF6C00', name:'Working with Others', promise:'belonging and partnership', promiseLine:'a promise of partnership — the customer should feel they are not doing this alone', similes:['Like a rowing team pulling in unison to win the race','Like a beehive where every bee has a job, but the hive only thrives when they work together'] },
+  { id:15, colour:'#3949AB', name:'Learning through Experience', similes:['Like falling and learning to stand again','Like stumbling mid-race, then finding your stride','Like baking without a recipe'] }
+];
+
+/* ================= STATE ================= */
+const state = {
+  session:'', consent:null,
+  before:'', after:'',
+  picked:[], ranked:[], whyLead:'',
+  template:{need:'',help:'',without:''},
+  trustCue:null, peerVote:null,
+  revisions:0, started:null, responseId:null, submitted:false
+};
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const SCREENS = ['#s-join','#s-consent','#s-before','#s-promise','#s-rank','#s-rewrite','#s-done'];
+function show(id){
+  $$('.screen').forEach(el=>el.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo({top:0});
+  const stepIdx = SCREENS.indexOf(id);
+  $('#steps').hidden = stepIdx < 1;
+  if(stepIdx>=1){ $$('#steps span').forEach((sp,i)=>sp.classList.toggle('done', i < stepIdx)); }
+}
+function rid(){ return 'R-' + Math.random().toString(36).slice(2,7).toUpperCase(); }
+function esc(t){ const d=document.createElement('div'); d.textContent=t??''; return d.innerHTML; }
+
+/* ================= JOIN ================= */
+$('#b-join').onclick = () => {
+  const c = $('#code').value.trim().toUpperCase();
+  if(!c){ $('#code').focus(); return; }
+  state.session = c;
+  show('#s-consent');
+};
+$('#b-fac').onclick = () => show('#s-facil');
+
+/* ================= CONSENT ================= */
+$('#b-optin').onclick   = () => { state.consent='optin';     begin(); };
+$('#b-nocapture').onclick = () => { state.consent='nocapture'; begin(); };
+$('#b-skip').onclick    = () => { state.consent='skipped';   show('#s-skipped'); };
+function begin(){
+  state.started = Date.now();
+  state.responseId = rid();
+  show('#s-before');
+}
+
+/* ================= BEFORE ================= */
+$('#before').addEventListener('input', e=>{
+  $('#cc-before').textContent = e.target.value.length;
+  $('#b-before').disabled = e.target.value.trim().length < 3;
+});
+$('#b-before').onclick = () => {
+  state.before = $('#before').value.trim();
+  renderPromise();
+  show('#s-promise');
+};
+
+/* ================= PROMISE CARDS (pick 2 of 15) ================= */
+function renderPromise(){
+  const g = $('#promgrid'); g.innerHTML='';
+  CARDS.forEach(c=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='fcard'; b.dataset.id=c.id;
+    b.innerHTML = `<span class="dot" style="background:${c.colour}"></span>
+      <span class="ph">${esc(c.name)}</span><span class="ar">${esc(c.similes[0])}</span>
+      <span class="info" role="button" aria-label="About ${esc(c.name)}" data-info="${c.id}">ⓘ</span>`;
+    b.onclick = (ev)=>{
+      if(ev.target.dataset && ev.target.dataset.info){ showBack(c); return; }
+      toggle(c.id);
+    };
+    if(state.picked.includes(c.id)) b.classList.add('sel');
+    g.appendChild(b);
+  });
+  updatePromCount();
+}
+function toggle(id){
+  const i = state.picked.indexOf(id);
+  if(i>-1){ state.picked.splice(i,1); state.revisions++; }
+  else {
+    if(state.picked.length>=2){ flashProm('You already have 2 — unselect one first'); return; }
+    state.picked.push(id);
+  }
+  renderPromise();
+}
+function updatePromCount(msg){
+  $('#promcount').textContent = msg || `Pick 2 cards — ${state.picked.length} of 2 selected`;
+  $('#b-promise').disabled = state.picked.length!==2;
+}
+let flashT;
+function flashProm(m){ updatePromCount(m); clearTimeout(flashT); flashT=setTimeout(()=>updatePromCount(),1800); }
+function showBack(c){
+  $('#promback').innerHTML = `<div class="backpanel" role="note">
+    <h3>${esc(c.name)}</h3>
+    ${c.similes.map(s=>`<p style="margin:.3em 0 0;">${esc(s)}</p>`).join('')}
+    ${c.promiseLine?`<p style="margin:.6em 0 0;"><strong>As a promise:</strong> ${esc(c.promiseLine)}.</p>`:''}
+  </div>`;
+  $('#promback').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+$('#b-promise').onclick = () => { state.ranked=[...state.picked]; renderRank(); show('#s-rank'); };
+
+/* ================= RANK (2 cards) + JUSTIFICATION ================= */
+function renderRank(){
+  const rl = $('#ranklist'); rl.innerHTML='';
+  state.ranked.forEach((id,idx)=>{
+    const c = CARDS.find(x=>x.id===id);
+    const row = document.createElement('div'); row.className='rankrow';
+    row.innerHTML = `<span class="pos">${idx+1}</span>
+      <span class="nm"><span class="ph">${esc(c.name)}</span><br><span class="ar">${idx===0?'the leading promise':'the supporting promise'}</span></span>
+      <span class="mv">
+        <button type="button" aria-label="Move ${esc(c.name)} up" ${idx===0?'disabled':''} data-up="${idx}">▲</button>
+        <button type="button" aria-label="Move ${esc(c.name)} down" ${idx===1?'disabled':''} data-down="${idx}">▼</button>
+      </span>`;
+    rl.appendChild(row);
+  });
+  rl.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{ swap(+b.dataset.up,+b.dataset.up-1); });
+  rl.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>{ swap(+b.dataset.down,+b.dataset.down+1); });
+}
+function swap(a,b){ [state.ranked[a],state.ranked[b]]=[state.ranked[b],state.ranked[a]]; state.revisions++; renderRank(); }
+$('#whylead').addEventListener('input', e=>{ $('#cc-why').textContent=e.target.value.length; });
+$('#b-ranked').onclick = () => {
+  state.whyLead = $('#whylead').value.trim();
+  show('#s-rewrite');
+};
+
+/* ================= REWRITE ================= */
+function updateTemplate(){
+  const n=$('#t-need').value.trim(), h=$('#t-help').value.trim(), w=$('#t-without').value.trim();
+  const pv = $('#template-preview');
+  if(n||h||w){
+    const line = `For people who need ${n||'…'}, we help them ${h||'…'} without ${w||'…'}.`;
+    pv.hidden=false;
+    pv.textContent = line;
+    if(n&&h&&w && !$('#after').value.trim()){ $('#after').value = line; $('#cc-after').textContent = line.length; }
+  } else pv.hidden=true;
+  updateRewriteBtn();
+}
+['#t-need','#t-help','#t-without'].forEach(s=>$(s).addEventListener('input', updateTemplate));
+$('#after').addEventListener('input', e=>{ $('#cc-after').textContent=e.target.value.length; updateRewriteBtn(); });
+$('#trustlist').addEventListener('change', ()=>{
+  $$('#trustlist label').forEach(l=>l.classList.toggle('sel', l.querySelector('input').checked));
+  updateRewriteBtn();
+});
+function updateRewriteBtn(){
+  const t = (document.querySelector('input[name=trust]:checked')||{}).value;
+  $('#b-rewrite').disabled = $('#after').value.trim().length < 3 || !t;
+}
+$('#b-rewrite').onclick = () => {
+  state.template = { need:$('#t-need').value.trim(), help:$('#t-help').value.trim(), without:$('#t-without').value.trim() };
+  state.after = $('#after').value.trim();
+  state.trustCue = (document.querySelector('input[name=trust]:checked')||{}).value || null;
+  finish();
+};
+
+/* ================= DONE ================= */
+function finish(){
+  const lead = CARDS.find(c=>c.id===state.ranked[0]);
+  const supp = CARDS.find(c=>c.id===state.ranked[1]);
+  const promiseFor = c => c.promiseLine ? c.promiseLine : `a promise of what ${c.name.toLowerCase()} feels like — ${c.similes[0].toLowerCase()}`;
+  const tw = $('#takeaways');
+  tw.innerHTML = `
+    <div class="takeaway">
+      <span class="rk">Before</span>
+      <p>${esc(state.before)}</p>
+      <span class="rk" style="margin-top:8px;display:inline-block;">After</span>
+      <p><strong>${esc(state.after)}</strong></p>
+    </div>
+    <div class="takeaway">
+      <span class="rk">The promise it carries</span>
+      <h3>1. ${esc(lead.name)}</h3>
+      <p>${esc(promiseFor(lead))}.</p>
+      ${state.whyLead?`<p><strong>Why it leads:</strong> ${esc(state.whyLead)}</p>`:''}
+      <h3>2. ${esc(supp.name)}</h3>
+      <p>${esc(promiseFor(supp))}.</p>
+      <p><strong>Trust cue to build in:</strong> ${esc(state.trustCue||'')}.</p>
+    </div>`;
+  $('#b-submit').textContent = state.consent==='optin' ? 'Submit and finish' : 'Finish (nothing is sent)';
+  show('#s-done');
+}
+$$('#peerseg button').forEach(b=>{
+  b.onclick = ()=>{
+    state.peerVote = b.dataset.vote;
+    $$('#peerseg button').forEach(x=>x.classList.toggle('sel', x===b));
+  };
+});
+
+/* ================= PDF ================= */
+$('#b-pdf').onclick = () => {
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    const W = 210, M = 18; let y = 20;
+    const put = (t, size, style, gap) => {
+      doc.setFont('helvetica', style||'normal'); doc.setFontSize(size);
+      const lines = doc.splitTextToSize(t, W - 2*M);
+      lines.forEach(ln=>{ if(y>275){ doc.addPage(); y=20; } doc.text(ln, M, y); y += (size*0.45); });
+      y += (gap??3);
+    };
+    const lead = CARDS.find(c=>c.id===state.ranked[0]);
+    const supp = CARDS.find(c=>c.id===state.ranked[1]);
+    const promiseFor = c => c.promiseLine ? c.promiseLine : `a promise of what ${c.name.toLowerCase()} feels like — ${c.similes[0].toLowerCase()}`;
+    doc.setFillColor(243,214,0); doc.rect(0,0,W,12,'F');
+    put('What Does This Venture Promise? — your reflection', 16, 'bold', 4);
+    put(`BTE603 seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
+    put('Before', 12, 'bold', 1);
+    put(`"${state.before}"`, 10, 'normal', 3);
+    put('After', 12, 'bold', 1);
+    put(`"${state.after}"`, 10, 'normal', 5);
+    put('The promise it carries', 12, 'bold', 1);
+    put(`1. ${lead.name} — ${promiseFor(lead)}`, 10, 'normal', 1);
+    if(state.whyLead) put(`Why it leads: ${state.whyLead}`, 10, 'italic', 1);
+    put(`2. ${supp.name} — ${promiseFor(supp)}`, 10, 'normal', 3);
+    put(`Trust cue to build in: ${state.trustCue||''}`, 10, 'normal', 3);
+    if(state.peerVote) put(`Partner's verdict on the new line: ${state.peerVote}`, 10, 'normal', 5); else y+=2;
+    put('How to read this: the before/after pair shows what changed when you named the promise explicitly. It is a draft direction from your own choices today — not a verdict on your venture. The useful question is whether the new line makes the promise testable on a real landing page.', 9, 'italic', 4);
+    put('What Does This Venture Promise? is a structured reflection tool by nnherit · nnherit.com', 8, 'normal', 0);
+    doc.save('venture-promise.pdf');
+  }catch(err){
+    alert('PDF download is not available on this connection — take a screenshot of your results instead.');
+  }
+};
+
+/* ================= SUBMIT ================= */
+function payload(){
+  const names = state.ranked.map(id=>CARDS.find(c=>c.id===id).name);
+  return {
+    v:1, activity:CONFIG.ACTIVITY_ID, consentVersion:CONFIG.CONSENT_VERSION,
+    session:state.session, responseId:state.responseId, ts:new Date().toISOString(),
+    consent:state.consent,
+    cardsRanked: [ names[0]||'', names[1]||'', state.trustCue||'' ],
+    before: state.before, after: state.after,
+    promiseCards: names, whyLead: state.whyLead,
+    template: state.template,
+    trustCue: state.trustCue, peerVote: state.peerVote,
+    revisions: state.revisions,
+    secondsOnTask: Math.round((Date.now()-state.started)/1000)
+  };
+}
+$('#b-submit').onclick = () => {
+  if(state.submitted) return;
+  state.submitted = true;
+  $('#b-submit').disabled = true;
+  $('#ridbox').textContent = state.responseId;
+  $('#afterword').hidden = false;
+  if(state.consent==='optin'){
+    const p = payload();
+    try{
+      const log = JSON.parse(localStorage.getItem('nnherit-app4-log')||'[]');
+      log.push(p); localStorage.setItem('nnherit-app4-log', JSON.stringify(log));
+    }catch(e){}
+    if(CONFIG.ENDPOINT){
+      // fire-and-forget: never keep the student waiting on seminar wifi
+      try{ fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}).catch(()=>{}); }
+      catch(e){}
+    }
+  }
+  $('#afterword').scrollIntoView({behavior:'smooth'});
+};
+
+/* ================= FACILITATOR ================= */
+$('#b-facunlock').onclick = () => {
+  if($('#faccode').value.trim() !== CONFIG.FACILITATOR_CODE){ $('#faccode').value=''; $('#faccode').placeholder='Wrong code'; return; }
+  $('#fac-locked').hidden = true; $('#fac-open').hidden = false;
+  renderFac();
+};
+function countTable(title, counts){
+  const rows = Object.entries(counts).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+  return `<table class="fac"><thead><tr><th>${title}</th><th>#</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function renderFac(){
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app4-log')||'[]'); }catch(e){}
+  if(!log.length){ $('#fac-summary').innerHTML = '<p class="soft">No submissions stored on this device yet.</p>'; return; }
+  const leads={}, trusts={}, votes={};
+  log.forEach(r=>{
+    const lead=(r.promiseCards||[])[0];
+    if(lead) leads[esc(lead)]=(leads[esc(lead)]||0)+1;
+    if(r.trustCue) trusts[esc(r.trustCue)]=(trusts[esc(r.trustCue)]||0)+1;
+    if(r.peerVote) votes[esc(r.peerVote)]=(votes[esc(r.peerVote)]||0)+1;
+  });
+  $('#fac-summary').innerHTML = `<p><strong>${log.length}</strong> submission(s) on this device.</p>
+    ${countTable('Leading promise', leads)}
+    ${countTable('Trust cue', trusts)}
+    ${countTable('Peer vote', votes)}`;
+}
+$('#b-faccsv').onclick = () => {
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app4-log')||'[]'); }catch(e){}
+  const head = ['ts','session','responseId','consent','before','after','promise1','promise2','whyLead','templateNeed','templateHelp','templateWithout','trustCue','peerVote','revisions','secondsOnTask'];
+  const lines = [head.join(',')].concat(log.map(r=>{
+    const t=r.template||{};
+    const f = v => `"${String(v??'').replace(/"/g,'""')}"`;
+    return [r.ts,r.session,r.responseId,r.consent,r.before,r.after,
+      (r.promiseCards||[])[0],(r.promiseCards||[])[1],r.whyLead,
+      t.need,t.help,t.without,r.trustCue,r.peerVote,
+      r.revisions,r.secondsOnTask].map(f).join(',');
+  }));
+  const blob = new Blob([lines.join('\n')],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='nnherit-app4-session-data.csv'; a.click();
+};
+$('#b-facback').onclick = () => location.reload();
+</script>
+</body>
+</html>

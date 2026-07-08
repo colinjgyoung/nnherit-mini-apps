@@ -9,8 +9,10 @@ Interactive micro-apps by nnherit for the BTE603 "New Ventures in Technology" co
 | App 1 — Founder Starting Point | 1 | https://colinjgyoung.github.io/nnherit-mini-apps/apps/app1-founder-starting-point.html |
 | App 2 — Are Your Customers Just Like You? | 3 | https://colinjgyoung.github.io/nnherit-mini-apps/apps/app2-customers-like-you.html |
 | App 3 — Assumption Dissonance Check | 5 | https://colinjgyoung.github.io/nnherit-mini-apps/apps/app3-assumption-dissonance-check.html |
+| App 4 — What Does This Venture Promise? | 7 | https://colinjgyoung.github.io/nnherit-mini-apps/apps/app4-venture-promise.html |
+| App 5 — Stakeholder Tension Map | 9 | https://colinjgyoung.github.io/nnherit-mini-apps/apps/app5-stakeholder-tension-map.html |
 
-Apps 4–7 will be added here as they are built.
+Apps 6 and 7 will be added here as they are built.
 
 ## Repo layout
 
