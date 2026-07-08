@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Would You Fund This? — nnherit x BTE603</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --nn:#F3D600; --nn-dark:#d9c000;
+    --ink:#1a1a1a; --ink-soft:#5a5a5a; --ink-muted:#8a8a86;
+    --paper:#ffffff; --paper-warm:#faf9f4; --paper-shade:#f3f1e8;
+    --border:#e4e2d8; --border-strong:#cfccbf;
+    --ok:#46a24a; --bad:#a12433; --radius:10px;
+    --font:'Source Sans Pro','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper-warm);color:var(--ink);font-family:var(--font);line-height:1.45;font-size:16px;}
+  .wrap{max-width:520px;margin:0 auto;padding:18px 16px 40px;}
+  header{border-bottom:4px solid var(--nn);padding:10px 0 10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  header .brand{font-weight:700;font-size:1.02rem;letter-spacing:.01em;}
+  header .mod{font-size:.78rem;color:var(--ink-soft);}
+  h1{font-size:1.32rem;margin:.2em 0 .35em;}
+  h2{font-size:1.08rem;margin:.2em 0 .4em;}
+  p{margin:.4em 0 .8em;}
+  .soft{color:var(--ink-soft);font-size:.92rem;}
+  .tiny{color:var(--ink-muted);font-size:.8rem;}
+  .screen{display:none;}
+  .screen.on{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  .steps{display:flex;gap:5px;margin:0 0 16px;}
+  .steps span{flex:1;height:5px;border-radius:3px;background:var(--border);}
+  .steps span.done{background:var(--nn);}
+  button{font-family:inherit;}
+  .btn{display:block;width:100%;padding:14px 16px;margin:10px 0 0;font-size:1rem;font-weight:600;
+       border-radius:var(--radius);border:1px solid var(--border-strong);background:var(--paper);
+       color:var(--ink);cursor:pointer;min-height:48px;text-align:center;}
+  .btn:active{transform:scale(.99);}
+  .btn.primary{background:var(--nn);border-color:var(--nn-dark);}
+  .btn.quiet{background:transparent;border-color:transparent;color:var(--ink-soft);font-weight:400;text-decoration:underline;min-height:40px;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  input[type=text],select,textarea{
+    width:100%;padding:13px 12px;font-size:1rem;font-family:inherit;border:1px solid var(--border-strong);
+    border-radius:var(--radius);background:var(--paper);color:var(--ink);}
+  input:focus,select:focus,textarea:focus,button:focus{outline:3px solid var(--nn);outline-offset:1px;}
+  label{display:block;font-weight:600;margin:14px 0 5px;}
+  label .opt{font-weight:400;color:var(--ink-muted);font-size:.85rem;}
+  .boardwrap{margin:14px 0 4px;}
+  .axis-top{display:flex;justify-content:space-between;font-size:.8rem;color:var(--ink-soft);font-weight:600;margin-bottom:4px;}
+  .boardrow{display:flex;align-items:stretch;gap:6px;}
+  .axis-side{writing-mode:vertical-rl;transform:rotate(180deg);display:flex;justify-content:space-between;
+    font-size:.8rem;color:var(--ink-soft);font-weight:600;text-align:center;}
+  .board{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;aspect-ratio:1;}
+  .board button{position:relative;border:1px solid var(--border);border-radius:8px;background:var(--paper);
+    cursor:pointer;min-height:44px;}
+  .board button:nth-child(odd){background:var(--paper-shade);}
+  .board button.placed{border-color:var(--ink);}
+  .board .tok{position:absolute;inset:0;margin:auto;width:26px;height:26px;border-radius:50%;color:#fff;
+    font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .radio-list label{font-weight:400;margin:0 0 8px;border:1px solid var(--border-strong);border-radius:var(--radius);
+    padding:12px 12px;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:10px;}
+  .radio-list input{width:auto;}
+  .radio-list label.sel{background:var(--nn);border-color:var(--nn-dark);font-weight:600;}
+  .sliderbox{margin:16px 0;}
+  .sliderbox input[type=range]{width:100%;accent-color:var(--nn-dark);height:38px;}
+  .sliderbox .ends{display:flex;justify-content:space-between;font-size:.82rem;color:var(--ink-soft);}
+  .bigval{text-align:center;font-size:2rem;font-weight:700;margin:4px 0 0;}
+  .scard{border:2px solid var(--ink);border-radius:var(--radius);background:var(--paper);padding:14px 16px;margin:12px 0;}
+  .scard .cat{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);font-weight:700;}
+  .scard h3{margin:.15em 0 .3em;font-size:1.15rem;}
+  .dimrow{margin:14px 0 4px;}
+  .dimrow .dimname{font-weight:700;margin-bottom:5px;}
+  .estseg{display:flex;gap:4px;}
+  .estseg button{flex:1;padding:10px 2px;border:1px solid var(--border-strong);border-radius:8px;
+    background:var(--paper);cursor:pointer;font-size:.88rem;min-height:44px;font-weight:600;}
+  .estseg button.sel{background:var(--nn);border-color:var(--nn-dark);}
+  .reveal{border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--paper-shade);
+    padding:12px 14px;margin:12px 0;}
+  .reveal table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  .reveal th,.reveal td{padding:5px 6px;text-align:center;border-bottom:1px solid var(--border);}
+  .reveal th:first-child,.reveal td:first-child{text-align:left;}
+  .delta-ok{color:var(--ok);font-weight:700;}
+  .delta-off{color:var(--bad);font-weight:700;}
+  .takeaway{border:2px solid var(--nn);border-radius:var(--radius);background:var(--paper);padding:14px 16px;margin:12px 0;}
+  .takeaway .rk{font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+  .takeaway h3{margin:.05em 0 .15em;font-size:1.06rem;}
+  .takeaway p{margin:.25em 0;font-size:.93rem;}
+  .notice{border-left:4px solid var(--nn);background:var(--paper-shade);padding:10px 12px;border-radius:0 var(--radius) var(--radius) 0;margin:12px 0;font-size:.92rem;}
+  .idbox{font-family:monospace;background:var(--ink);color:#fff;padding:8px 12px;border-radius:8px;display:inline-block;letter-spacing:.08em;}
+  table.fac{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0;}
+  table.fac th,table.fac td{border:1px solid var(--border-strong);padding:6px 8px;text-align:left;}
+  table.fac th{background:var(--paper-shade);}
+  .charcount{text-align:right;font-size:.78rem;color:var(--ink-muted);margin-top:3px;}
+  footer{margin-top:26px;text-align:center;}
+  footer .tiny{display:block;}
+  a{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="brand">nnherit</span>
+    <span class="mod">BTE603 · Week 11 · Would You Fund This?</span>
+  </header>
+
+  <div class="steps" id="steps" hidden>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- 0 JOIN -->
+  <section class="screen on" id="s-join">
+    <h1>Would You Fund This?</h1>
+    <p>A short seminar activity — about 15 minutes. It turns valuation from a guess into an evidence exercise — and then stress-tests your venture against a scenario you didn't choose. It does not label you and it does not affect your marks.</p>
+    <label for="code">Session code <span class="opt">(shown on the seminar screen)</span></label>
+    <input type="text" id="code" inputmode="text" autocomplete="off" maxlength="12" placeholder="e.g. WK11-A">
+    <button class="btn primary" id="b-join">Join session</button>
+    <p class="tiny" style="margin-top:14px;">Anonymous by default. No names required.</p>
+    <button class="btn quiet" id="b-fac">Facilitator view</button>
+  </section>
+
+  <!-- 1 CONSENT -->
+  <section class="screen" id="s-consent">
+    <h2>Before you start</h2>
+    <p>This short activity is part of normal seminar learning. If you opt in, anonymous interaction data from your choices may be used to improve the teaching activity and nnherit's product design. Your participation or non-participation will not affect marks, feedback, or standing in the module. Do not enter your name or contact details. You can skip, participate without data capture, or withdraw later using the code shown at the end.</p>
+    <p class="soft">If you opt in, this activity will record your strengths and risks with their grid placements and evidence tags, your confidence ratings, and your stress-test impact estimates alongside the cards' own scores.</p>
+    <button class="btn primary" id="b-optin">Opt in and continue</button>
+    <button class="btn" id="b-nocapture">Continue without data capture</button>
+    <button class="btn quiet" id="b-skip">Skip this activity</button>
+  </section>
+
+  <!-- SKIPPED -->
+  <section class="screen" id="s-skipped">
+    <h2>No problem</h2>
+    <p>You can continue the seminar without the app. This is normal and fully fine. If you change your mind, reload this page.</p>
+  </section>
+
+  <!-- 2 ITEM (reused: strength 1, strength 2 optional, risk 1, risk 2 optional) -->
+  <section class="screen" id="s-item">
+    <h2 id="item-title"></h2>
+    <p class="soft" id="item-hint"></p>
+    <label for="item-text" id="item-label"></label>
+    <textarea id="item-text" rows="2" maxlength="120"></textarea>
+    <div class="charcount"><span id="cc-item">0</span>/120</div>
+    <p class="soft" style="margin-top:14px;"><strong>Tap the grid:</strong> how big is its impact on the venture's value, and how confident are you it's real?</p>
+    <div class="boardwrap">
+      <div class="axis-top"><span>← Low impact</span><span>High impact →</span></div>
+      <div class="boardrow">
+        <div class="axis-side"><span>High confidence</span><span>Low confidence</span></div>
+        <div class="board" id="item-board"></div>
+      </div>
+    </div>
+    <label>What evidence do you have for it today?</label>
+    <div class="radio-list" id="evlist">
+      <label><input type="radio" name="ev" value="interview">Customer interviews</label>
+      <label><input type="radio" name="ev" value="click test">Click test / landing page data</label>
+      <label><input type="radio" name="ev" value="sales proxy">Sales proxy — pre-orders, sign-ups, deposits</label>
+      <label><input type="radio" name="ev" value="prototype reaction">Prototype reaction</label>
+      <label><input type="radio" name="ev" value="secondary research">Secondary research</label>
+      <label><input type="radio" name="ev" value="operational proof">Operational proof — it already runs</label>
+      <label><input type="radio" name="ev" value="none yet">No evidence yet</label>
+    </div>
+    <button class="btn primary" id="b-item" disabled></button>
+    <button class="btn quiet" id="b-itemskip" hidden>Skip — continue without a second one</button>
+  </section>
+
+  <!-- 3 EVIDENCE + VALUATION -->
+  <section class="screen" id="s-value">
+    <h2>The evidence question</h2>
+    <label for="evraise">What single piece of evidence would most raise your confidence in this venture's value?</label>
+    <textarea id="evraise" rows="2" maxlength="140" placeholder="e.g. 50 pre-orders from strangers, not friends"></textarea>
+    <div class="charcount"><span id="cc-ev">0</span>/140</div>
+    <div class="sliderbox">
+      <label for="conf">How confident are you that you could defend a valuation of this venture today?</label>
+      <input type="range" id="conf" min="1" max="5" step="1" value="3" aria-describedby="confval">
+      <div class="ends"><span>1 · couldn't defend it</span><span>5 · fully defensible</span></div>
+      <div class="bigval" id="confval">3</div>
+    </div>
+    <button class="btn primary" id="b-value" disabled>Start the stress test</button>
+  </section>
+
+  <!-- 4 STRESS TEST (reused ×3) -->
+  <section class="screen" id="s-stress">
+    <h2 id="stress-title"></h2>
+    <p class="soft">A scenario has been drawn for you. Would you still fund this venture if it hit? First estimate the impact yourself.</p>
+    <div class="scard">
+      <span class="cat" id="scard-cat"></span>
+      <h3 id="scard-name"></h3>
+      <p id="scard-desc" style="margin:.2em 0 0;font-size:.93rem;"></p>
+    </div>
+    <p class="soft"><strong>Your estimate:</strong> how hard would this hit <em>your</em> venture on each dimension? (−3 severe damage · 0 no effect · +3 strong gain)</p>
+    <div id="dims"></div>
+    <button class="btn primary" id="b-reveal" disabled>Reveal the card's scores</button>
+    <div class="reveal" id="revealbox" hidden></div>
+    <button class="btn primary" id="b-stressnext" hidden></button>
+  </section>
+
+  <!-- 5 DONE -->
+  <section class="screen" id="s-done">
+    <h2>Your funding case, stress-tested</h2>
+    <p class="soft">A reflection, not a result. Here is your evidence map, and how your risk instincts compared with the cards' scoring.</p>
+    <div id="takeaways"></div>
+    <div class="notice"><strong>Now turn to a partner.</strong> Pitch them your venture in one line, then tell them your drawn scenarios. Ask: would you still fund it? Two minutes.</div>
+    <button class="btn primary" id="b-pdf">Download my results (PDF)</button>
+    <button class="btn" id="b-submit">Submit and finish</button>
+    <div id="afterword" hidden>
+      <p style="margin-top:16px;"><strong>Done — thank you.</strong></p>
+      <p class="soft">To withdraw your data later, give this code to your facilitator:</p>
+      <p><span class="idbox" id="ridbox"></span></p>
+    </div>
+  </section>
+
+  <!-- FACILITATOR -->
+  <section class="screen" id="s-facil">
+    <h2>Facilitator view</h2>
+    <div id="fac-locked">
+      <label for="faccode">Facilitator code</label>
+      <input type="text" id="faccode" autocomplete="off">
+      <button class="btn primary" id="b-facunlock">Open</button>
+    </div>
+    <div id="fac-open" hidden>
+      <p class="soft">Submissions stored on <strong>this device</strong> are listed below. When the Google Sheet endpoint is connected, all phones in the session send their results there — the sheet is the full session view.</p>
+      <div id="fac-summary"></div>
+      <button class="btn" id="b-faccsv">Download this device's data (CSV)</button>
+      <button class="btn quiet" id="b-facback">Back to start</button>
+    </div>
+  </section>
+
+  <footer>
+    <span class="tiny">Would You Fund This? · a structured reflection tool by nnherit · nnherit.com</span>
+    <span class="tiny">Anonymous by default · withdrawal as easy as opting in</span>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ================= CONFIG (edit these) ================= */
+const CONFIG = {
+  ENDPOINT: 'https://script.google.com/macros/s/AKfycbxW0HYD0RBAjswNnoNUVGx1jgcPxKaVq5fzZbKU9sUDpU-d0rVmXHDl2ysVE1PdaoeI5Q/exec',
+  FACILITATOR_CODE: 'nnherit-fac',
+  ACTIVITY_ID: 'app7-would-you-fund-this',
+  CONSENT_VERSION: 'v1-2026-07-07',
+  STRESS_DRAWS: 3
+};
+
+/* ============ CARD DATA ============ */
+/* Succession Dynamics — agnostic 12-card stress-test subset.
+   Descriptions are the deck's own card copy (docs/card-content-succession-dynamics.md)
+   with app-only agnostic relabelling (family member → team member, successor →
+   team/leader). Impact scores verbatim from Succession_Dynamics_Card_Checklist.csv,
+   dimension labels relabelled in-app per the planning doc: Harmony → Team harmony.
+   Challenge shown under an app-only neutral category label. */
+const SCENARIOS = [
+  { id:'FR-12', name:'Sudden Departure',        cat:'Leadership shock',    desc:'The founder abruptly leaves the company, leaving the team unprepared and facing a leadership vacuum.',
+    impacts:{ 'Profitability':-2, 'Team harmony':-2, 'Readiness':-2 } },
+  { id:'RR-10', name:'Key Departure',           cat:'Team shock',          desc:'An essential team member suddenly leaves, leaving responsibilities unclear and critical tasks unattended.',
+    impacts:{ 'Profitability':-2, 'Team harmony':-2, 'Continuity':-2 } },
+  { id:'VS-08', name:'Hidden Agendas',          cat:'Vision & strategy',   desc:'Personal aspirations and unspoken goals of individual team members lead to conflicting strategies.',
+    impacts:{ 'Profitability':-1, 'Team harmony':-2, 'Communication':-1 } },
+  { id:'CT-02', name:'Communication Breakdown', cat:'Communication & trust', desc:'A critical situation arises, and lack of communication leads to disastrous consequences.',
+    impacts:{ 'Profitability':-3, 'Team harmony':-2, 'Communication':-2 } },
+  { id:'CT-04', name:'Information Blackout',    cat:'Communication & trust', desc:'A key person withholds important information, breeding suspicion and hindering decision-making.',
+    impacts:{ 'Profitability':-2, 'Team harmony':-3, 'Governance':-1 } },
+  { id:'FR-08', name:'Micromanagement Mania',   cat:'Leadership shock',    desc:'The founder insists on controlling every detail, hindering progress and stifling the team’s initiative.',
+    impacts:{ 'Profitability':-3, 'Team harmony':-3, 'Readiness':-2 } },
+  { id:'FR-07', name:'Lingering Presence',      cat:'Leadership shock',    desc:'The founder keeps hovering over the team’s shoulder, offering unsolicited advice and undermining decisions.',
+    impacts:{ 'Profitability':-1, 'Team harmony':-2, 'Readiness':-1 } },
+  { id:'RR-11', name:'Overlapping Duties',      cat:'Roles & responsibilities', desc:'Multiple team members handle the same tasks, leading to confusion, redundancy, and wasted effort.',
+    impacts:{ 'Profitability':-2, 'Team harmony':-1, 'Governance':-1 } },
+  { id:'RR-02', name:'Ambiguous Hierarchies',   cat:'Roles & responsibilities', desc:'Unclear reporting lines and decision-making authority create friction and impede progress.',
+    impacts:{ 'Profitability':-1, 'Governance':-2, 'Readiness':-1 } },
+  { id:'SP-10', name:'Missing Skills',          cat:'Capability shock',    desc:'The team lacks essential business skills, leading to poor decisions and operational inefficiencies.',
+    impacts:{ 'Profitability':-2, 'Team harmony':-1, 'Readiness':-2 } },
+  { id:'SP-11', name:'Reckless Decisions',      cat:'Capability shock',    desc:'A leader makes impulsive choices that negatively impact the business, causing financial losses or reputational damage.',
+    impacts:{ 'Profitability':-3, 'Team harmony':-2, 'External':-2 } },
+  { id:'VS-04', name:'External Pressures',      cat:'Vision & strategy',   desc:'Investors, stakeholders, or customers exert pressure, adding complexity to the vision discussion.',
+    impacts:{ 'Profitability':-1, 'External':-2, 'Governance':-1 } }
+];
+
+const ITEM_STEPS = [
+  { type:'strength', required:true,  title:'A venture strength',      label:'The strength',          hint:'One thing about this venture that genuinely supports its value. One line.', ph:'e.g. we already have 200 weekly users', btn:'Continue' },
+  { type:'strength', required:false, title:'Another strength?',       label:'The strength (optional)', hint:'Add a second one, or skip.', ph:'', btn:'Continue with this one' },
+  { type:'risk',     required:true,  title:'A venture risk',          label:'The risk',              hint:'One thing that could genuinely undermine its value. One line.', ph:'e.g. we depend on one supplier', btn:'Continue' },
+  { type:'risk',     required:false, title:'Another risk?',           label:'The risk (optional)',   hint:'Add a second one, or skip.', ph:'', btn:'Continue with this one' }
+];
+
+/* ================= STATE ================= */
+const state = {
+  session:'', consent:null,
+  items:[],                       // {type, text, impact 1-5, confidence 1-5, evidence}
+  itemIdx:0, curItem:null,
+  evidenceRaise:'', valuationConfidence:3,
+  drawn:[], stressIdx:0, stress:[],   // stress: {id, name, estimates:{}, official:{}}
+  revisions:0, started:null, responseId:null, submitted:false
+};
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const SCREENS = ['#s-join','#s-consent','#s-item','#s-value','#s-stress','#s-done'];
+function show(id){
+  $$('.screen').forEach(el=>el.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo({top:0});
+  const stepIdx = SCREENS.indexOf(id);
+  $('#steps').hidden = stepIdx < 1;
+  if(stepIdx>=1){ $$('#steps span').forEach((sp,i)=>sp.classList.toggle('done', i < stepIdx)); }
+}
+function rid(){ return 'R-' + Math.random().toString(36).slice(2,7).toUpperCase(); }
+function esc(t){ const d=document.createElement('div'); d.textContent=t??''; return d.innerHTML; }
+
+/* ================= JOIN ================= */
+$('#b-join').onclick = () => {
+  const c = $('#code').value.trim().toUpperCase();
+  if(!c){ $('#code').focus(); return; }
+  state.session = c;
+  show('#s-consent');
+};
+$('#b-fac').onclick = () => show('#s-facil');
+
+/* ================= CONSENT ================= */
+$('#b-optin').onclick   = () => { state.consent='optin';     begin(); };
+$('#b-nocapture').onclick = () => { state.consent='nocapture'; begin(); };
+$('#b-skip').onclick    = () => { state.consent='skipped';   show('#s-skipped'); };
+function begin(){
+  state.started = Date.now();
+  state.responseId = rid();
+  state.itemIdx = 0;
+  renderItem();
+  show('#s-item');
+}
+
+/* ================= ITEMS (strengths & risks on the grid) ================= */
+function renderItem(){
+  const step = ITEM_STEPS[state.itemIdx];
+  state.curItem = { type:step.type, text:'', impact:null, confidence:null, evidence:null };
+  $('#item-title').textContent = step.title;
+  $('#item-hint').textContent = step.hint;
+  $('#item-label').textContent = step.label;
+  $('#item-text').value=''; $('#item-text').placeholder = step.ph; $('#cc-item').textContent='0';
+  $('#b-item').textContent = step.btn;
+  $('#b-itemskip').hidden = step.required;
+  document.querySelectorAll('input[name=ev]').forEach(i=>{ i.checked=false; });
+  $$('#evlist label').forEach(l=>l.classList.remove('sel'));
+  renderItemBoard();
+  updateItemBtn();
+}
+function renderItemBoard(){
+  const board = $('#item-board'); board.innerHTML='';
+  for(let row=0; row<5; row++){
+    for(let col=0; col<5; col++){
+      const impact = col+1, confidence = 5-row;
+      const cell = document.createElement('button');
+      cell.type='button';
+      cell.setAttribute('aria-label', `impact ${impact} of 5, confidence ${confidence} of 5`);
+      if(state.curItem.impact===impact && state.curItem.confidence===confidence){
+        cell.classList.add('placed');
+        cell.innerHTML = `<span class="tok" style="background:${state.curItem.type==='strength'?'#46a24a':'#a12433'}">${state.curItem.type==='strength'?'S':'R'}</span>`;
+      }
+      cell.onclick = ()=>{
+        if(state.curItem.impact!==null) state.revisions++;
+        state.curItem.impact=impact; state.curItem.confidence=confidence;
+        renderItemBoard(); updateItemBtn();
+      };
+      board.appendChild(cell);
+    }
+  }
+}
+$('#item-text').addEventListener('input', e=>{ $('#cc-item').textContent=e.target.value.length; updateItemBtn(); });
+$('#evlist').addEventListener('change', ()=>{
+  $$('#evlist label').forEach(l=>l.classList.toggle('sel', l.querySelector('input').checked));
+  updateItemBtn();
+});
+function updateItemBtn(){
+  const ev = (document.querySelector('input[name=ev]:checked')||{}).value;
+  $('#b-item').disabled = $('#item-text').value.trim().length < 3 || state.curItem.impact===null || !ev;
+}
+function nextItemStep(){
+  state.itemIdx++;
+  if(state.itemIdx < ITEM_STEPS.length){ renderItem(); window.scrollTo({top:0}); }
+  else show('#s-value');
+}
+$('#b-item').onclick = () => {
+  state.curItem.text = $('#item-text').value.trim();
+  state.curItem.evidence = (document.querySelector('input[name=ev]:checked')||{}).value || null;
+  state.items.push({...state.curItem});
+  nextItemStep();
+};
+$('#b-itemskip').onclick = () => nextItemStep();
+
+/* ================= EVIDENCE + VALUATION ================= */
+$('#evraise').addEventListener('input', e=>{
+  $('#cc-ev').textContent=e.target.value.length;
+  $('#b-value').disabled = e.target.value.trim().length < 3;
+});
+$('#conf').addEventListener('input', e=>{ $('#confval').textContent=e.target.value; });
+$('#b-value').onclick = () => {
+  state.evidenceRaise = $('#evraise').value.trim();
+  state.valuationConfidence = +$('#conf').value;
+  // draw the stress-test cards, random without replacement
+  const pool = [...SCENARIOS];
+  state.drawn = [];
+  for(let i=0;i<CONFIG.STRESS_DRAWS;i++){
+    state.drawn.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  }
+  state.stressIdx = 0;
+  renderStress();
+  show('#s-stress');
+};
+
+/* ================= STRESS TEST (×3) ================= */
+function curScenario(){ return state.drawn[state.stressIdx]; }
+function renderStress(){
+  const sc = curScenario();
+  state.stress[state.stressIdx] = state.stress[state.stressIdx] || { id:sc.id, name:sc.name, estimates:{}, official:sc.impacts };
+  $('#stress-title').textContent = `Stress test — card ${state.stressIdx+1} of ${CONFIG.STRESS_DRAWS}`;
+  $('#scard-cat').textContent = sc.cat;
+  $('#scard-name').textContent = sc.name;
+  $('#scard-desc').textContent = sc.desc;
+  $('#revealbox').hidden = true; $('#revealbox').innerHTML='';
+  $('#b-stressnext').hidden = true;
+  $('#b-reveal').hidden = false;
+  const dims = $('#dims'); dims.innerHTML='';
+  Object.keys(sc.impacts).forEach(dim=>{
+    const row = document.createElement('div'); row.className='dimrow';
+    row.innerHTML = `<div class="dimname">${esc(dim)}</div><div class="estseg" data-dim="${esc(dim)}">
+      ${[-3,-2,-1,0,1,2,3].map(v=>`<button type="button" data-v="${v}">${v>0?'+':''}${v}</button>`).join('')}</div>`;
+    dims.appendChild(row);
+  });
+  dims.querySelectorAll('.estseg button').forEach(b=>{
+    b.onclick = ()=>{
+      const seg = b.parentElement, dim = seg.dataset.dim;
+      const st = state.stress[state.stressIdx];
+      if(st.estimates[dim]!==undefined && st.estimates[dim]!==+b.dataset.v) state.revisions++;
+      st.estimates[dim] = +b.dataset.v;
+      seg.querySelectorAll('button').forEach(x=>x.classList.toggle('sel', x===b));
+      $('#b-reveal').disabled = Object.keys(st.estimates).length !== Object.keys(sc.impacts).length;
+    };
+  });
+  $('#b-reveal').disabled = true;
+}
+$('#b-reveal').onclick = () => {
+  const sc = curScenario();
+  const st = state.stress[state.stressIdx];
+  const rows = Object.keys(sc.impacts).map(dim=>{
+    const est = st.estimates[dim], off = sc.impacts[dim];
+    const d = Math.abs(est-off);
+    return `<tr><td>${esc(dim)}</td><td>${est>0?'+':''}${est}</td><td>${off>0?'+':''}${off}</td>
+      <td class="${d<=1?'delta-ok':'delta-off'}">${d===0?'spot on':`off by ${d}`}</td></tr>`;
+  }).join('');
+  $('#revealbox').innerHTML = `<table><thead><tr><th></th><th>You</th><th>Card</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="tiny" style="margin:.6em 0 0;">The card's scores come from the deck's own scoring — a shared reference point, not a verdict on your venture.</p>`;
+  $('#revealbox').hidden = false;
+  $('#b-reveal').hidden = true;
+  $('#b-stressnext').textContent = state.stressIdx < CONFIG.STRESS_DRAWS-1 ? 'Next card' : 'See your results';
+  $('#b-stressnext').hidden = false;
+};
+$('#b-stressnext').onclick = () => {
+  if(state.stressIdx < CONFIG.STRESS_DRAWS-1){
+    state.stressIdx++;
+    renderStress();
+    window.scrollTo({top:0});
+  } else finish();
+};
+
+/* ================= DONE ================= */
+function calibration(){
+  let n=0, sum=0;
+  state.stress.forEach(st=>{ Object.keys(st.official).forEach(d=>{ if(st.estimates[d]!==undefined){ sum+=Math.abs(st.estimates[d]-st.official[d]); n++; } }); });
+  return n ? (sum/n) : null;
+}
+function finish(){
+  const cal = calibration();
+  const calLine = cal===null ? '' :
+    cal<=0.7 ? 'Your estimates tracked the cards closely — your risk instincts and the deck’s scoring largely agree.' :
+    cal<=1.5 ? 'Your estimates were in the same territory as the cards, with some gaps — worth a look at which dimensions you read differently.' :
+    'Your estimates and the cards’ scores diverged quite a bit. Not wrong — but worth asking which dimensions you weigh differently, and why.';
+  const tw = $('#takeaways');
+  tw.innerHTML = `
+    <div class="takeaway">
+      <span class="rk">Your evidence map</span>
+      ${state.items.map(it=>`<p><strong>${it.type==='strength'?'Strength':'Risk'}:</strong> ${esc(it.text)}<br>
+        <span class="soft">impact ${it.impact}/5 · confidence ${it.confidence}/5 · evidence: ${esc(it.evidence)}</span></p>`).join('')}
+      <p><strong>Evidence that would raise confidence:</strong> ${esc(state.evidenceRaise)}</p>
+      <p><strong>Valuation confidence today:</strong> ${state.valuationConfidence} of 5.</p>
+    </div>
+    <div class="takeaway">
+      <span class="rk">Stress test — ${state.stress.length} scenarios</span>
+      ${state.stress.map(st=>{
+        const dims = Object.keys(st.official).map(d=>`${esc(d)}: you ${st.estimates[d]>0?'+':''}${st.estimates[d]} / card ${st.official[d]}`).join(' · ');
+        return `<h3>${esc(st.name)}</h3><p class="soft">${dims}</p>`;
+      }).join('')}
+      <p>${esc(calLine)}</p>
+    </div>`;
+  $('#b-submit').textContent = state.consent==='optin' ? 'Submit and finish' : 'Finish (nothing is sent)';
+  show('#s-done');
+}
+
+/* ================= PDF ================= */
+$('#b-pdf').onclick = () => {
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'mm', format:'a4'});
+    const W = 210, M = 18; let y = 20;
+    const put = (t, size, style, gap) => {
+      doc.setFont('helvetica', style||'normal'); doc.setFontSize(size);
+      const lines = doc.splitTextToSize(t, W - 2*M);
+      lines.forEach(ln=>{ if(y>275){ doc.addPage(); y=20; } doc.text(ln, M, y); y += (size*0.45); });
+      y += (gap??3);
+    };
+    doc.setFillColor(243,214,0); doc.rect(0,0,W,12,'F');
+    put('Would You Fund This? — your reflection', 16, 'bold', 4);
+    put(`BTE603 seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
+    put('Your evidence map (impact / confidence, 1–5)', 12, 'bold', 1);
+    state.items.forEach(it=>{
+      put(`${it.type==='strength'?'Strength':'Risk'}: "${it.text}" — impact ${it.impact}/5, confidence ${it.confidence}/5, evidence: ${it.evidence}`, 10, 'normal', 1);
+    });
+    put(`Evidence that would most raise confidence: ${state.evidenceRaise}`, 10, 'normal', 1);
+    put(`Valuation confidence today: ${state.valuationConfidence} of 5`, 10, 'normal', 5);
+    put('Stress test — your estimates vs the cards', 12, 'bold', 1);
+    state.stress.forEach(st=>{
+      put(`"${st.name}"`, 11, 'bold', 1);
+      Object.keys(st.official).forEach(d=>{
+        put(`${d}: your estimate ${st.estimates[d]>0?'+':''}${st.estimates[d]}, card score ${st.official[d]}`, 10, 'normal', 1);
+      });
+      y += 2;
+    });
+    const cal = calibration();
+    if(cal!==null) put(`Average gap between your estimates and the cards' scores: ${cal.toFixed(1)} points.`, 10, 'italic', 4);
+    put('How to read this: the grid shows where your funding case rests on evidence and where on confidence alone. The stress test compares your risk instincts with the deck’s scoring — a shared reference point, not a verdict. The useful question is what evidence would let you re-place your lowest-confidence item.', 9, 'italic', 4);
+    put('Would You Fund This? is a structured reflection tool by nnherit · nnherit.com', 8, 'normal', 0);
+    doc.save('would-you-fund-this.pdf');
+  }catch(err){
+    alert('PDF download is not available on this connection — take a screenshot of your results instead.');
+  }
+};
+
+/* ================= SUBMIT ================= */
+function payload(){
+  return {
+    v:1, activity:CONFIG.ACTIVITY_ID, consentVersion:CONFIG.CONSENT_VERSION,
+    session:state.session, responseId:state.responseId, ts:new Date().toISOString(),
+    consent:state.consent,
+    cardsRanked: state.stress.map(st=>st.name),
+    items: state.items,
+    evidenceRaise: state.evidenceRaise,
+    valuationConfidence: state.valuationConfidence,
+    stress: state.stress,
+    calibrationGap: calibration(),
+    revisions: state.revisions,
+    secondsOnTask: Math.round((Date.now()-state.started)/1000)
+  };
+}
+$('#b-submit').onclick = () => {
+  if(state.submitted) return;
+  state.submitted = true;
+  $('#b-submit').disabled = true;
+  $('#ridbox').textContent = state.responseId;
+  $('#afterword').hidden = false;
+  if(state.consent==='optin'){
+    const p = payload();
+    try{
+      const log = JSON.parse(localStorage.getItem('nnherit-app7-log')||'[]');
+      log.push(p); localStorage.setItem('nnherit-app7-log', JSON.stringify(log));
+    }catch(e){}
+    if(CONFIG.ENDPOINT){
+      // fire-and-forget: never keep the student waiting on seminar wifi
+      try{ fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}).catch(()=>{}); }
+      catch(e){}
+    }
+  }
+  $('#afterword').scrollIntoView({behavior:'smooth'});
+};
+
+/* ================= FACILITATOR ================= */
+$('#b-facunlock').onclick = () => {
+  if($('#faccode').value.trim() !== CONFIG.FACILITATOR_CODE){ $('#faccode').value=''; $('#faccode').placeholder='Wrong code'; return; }
+  $('#fac-locked').hidden = true; $('#fac-open').hidden = false;
+  renderFac();
+};
+function countTable(title, counts){
+  const rows = Object.entries(counts).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+  return `<table class="fac"><thead><tr><th>${title}</th><th>#</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function renderFac(){
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app7-log')||'[]'); }catch(e){}
+  if(!log.length){ $('#fac-summary').innerHTML = '<p class="soft">No submissions stored on this device yet.</p>'; return; }
+  const evs={}, cards={};
+  let confSum=0, calSum=0, calN=0;
+  log.forEach(r=>{
+    (r.items||[]).forEach(it=>{ if(it.evidence) evs[esc(it.evidence)]=(evs[esc(it.evidence)]||0)+1; });
+    (r.stress||[]).forEach(st=>{ cards[esc(st.name)]=(cards[esc(st.name)]||0)+1; });
+    confSum += r.valuationConfidence||0;
+    if(r.calibrationGap!==null && r.calibrationGap!==undefined){ calSum+=r.calibrationGap; calN++; }
+  });
+  $('#fac-summary').innerHTML = `<p><strong>${log.length}</strong> submission(s) on this device · average valuation confidence <strong>${(confSum/log.length).toFixed(1)}</strong> of 5${calN?` · average calibration gap <strong>${(calSum/calN).toFixed(1)}</strong>`:''}</p>
+    ${countTable('Evidence types', evs)}
+    ${countTable('Scenarios drawn', cards)}`;
+}
+$('#b-faccsv').onclick = () => {
+  let log=[]; try{ log = JSON.parse(localStorage.getItem('nnherit-app7-log')||'[]'); }catch(e){}
+  const head = ['ts','session','responseId','consent',
+    'item1Type','item1Text','item1Impact','item1Confidence','item1Evidence',
+    'item2Type','item2Text','item2Impact','item2Confidence','item2Evidence',
+    'item3Type','item3Text','item3Impact','item3Confidence','item3Evidence',
+    'item4Type','item4Text','item4Impact','item4Confidence','item4Evidence',
+    'evidenceRaise','valuationConfidence',
+    'stress1','stress1Detail','stress2','stress2Detail','stress3','stress3Detail',
+    'calibrationGap','revisions','secondsOnTask'];
+  const lines = [head.join(',')].concat(log.map(r=>{
+    const it = i => (r.items||[])[i]||{};
+    const st = i => (r.stress||[])[i];
+    const stDetail = s => s ? Object.keys(s.official).map(d=>`${d}: est ${s.estimates[d]} vs ${s.official[d]}`).join('; ') : '';
+    const f = v => `"${String(v??'').replace(/"/g,'""')}"`;
+    return [r.ts,r.session,r.responseId,r.consent,
+      it(0).type,it(0).text,it(0).impact,it(0).confidence,it(0).evidence,
+      it(1).type,it(1).text,it(1).impact,it(1).confidence,it(1).evidence,
+      it(2).type,it(2).text,it(2).impact,it(2).confidence,it(2).evidence,
+      it(3).type,it(3).text,it(3).impact,it(3).confidence,it(3).evidence,
+      r.evidenceRaise,r.valuationConfidence,
+      st(0)?st(0).name:'',stDetail(st(0)),
+      st(1)?st(1).name:'',stDetail(st(1)),
+      st(2)?st(2).name:'',stDetail(st(2)),
+      r.calibrationGap,r.revisions,r.secondsOnTask].map(f).join(',');
+  }));
+  const blob = new Blob([lines.join('\n')],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='nnherit-app7-session-data.csv'; a.click();
+};
+$('#b-facback').onclick = () => location.reload();
+</script>
+</body>
+</html>
