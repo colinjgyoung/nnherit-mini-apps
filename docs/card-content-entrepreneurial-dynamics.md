@@ -1,6 +1,6 @@
 Status: draft
 
-# Entrepreneurial Dynamics — card content export for the BTE603 apps
+# Entrepreneurial Dynamics — card content export for the nnherit mini apps
 
 Extracted 2026-07-07 from Drive: "Similes & Situations for EntreComps.xlsx" (fileId 16fPXXnt0C_85x0BTDGza2jmGxCR6rbgP). Claude Code has no Drive access, so this file is the build source for Apps 3, 4, 5, 6. Card front visuals live in Drive folder "EntreComp Final Cads 26-03-25" — download manually if needed.
 

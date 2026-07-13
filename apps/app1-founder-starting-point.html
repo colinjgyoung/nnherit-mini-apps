@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Founder Starting Point — nnherit x BTE603</title>
+<title>Founder Starting Point — nnherit mini apps</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
@@ -104,7 +104,7 @@
 <div class="wrap">
   <header>
     <span class="brand">nnherit</span>
-    <span class="mod">BTE603 · Week 1 · Founder Starting Point</span>
+    <span class="mod">mini apps · Founder Starting Point</span>
   </header>
 
   <div class="steps" id="steps" hidden>
@@ -473,7 +473,7 @@ $('#b-pdf').onclick = () => {
     };
     doc.setFillColor(243,214,0); doc.rect(0,0,W,12,'F');
     put('Founder Starting Point — your reflection', 16, 'bold', 4);
-    put(`BTE603 seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
+    put(`nnherit mini apps · seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
     state.ranked.forEach((id,idx)=>{
       const c = CARDS.find(x=>x.id===id);
       put(`${idx+1}. "${c.phrase}" — ${c.archetype} (${idx===0?'leading':idx===1?'supporting':'background'} approach)`, 12, 'bold', 1);

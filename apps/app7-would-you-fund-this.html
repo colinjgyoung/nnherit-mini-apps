@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Would You Fund This? — nnherit x BTE603</title>
+<title>Would You Fund This? — nnherit mini apps</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
@@ -101,7 +101,7 @@
 <div class="wrap">
   <header>
     <span class="brand">nnherit</span>
-    <span class="mod">BTE603 · Week 11 · Would You Fund This?</span>
+    <span class="mod">mini apps · Would You Fund This?</span>
   </header>
 
   <div class="steps" id="steps" hidden>
@@ -510,7 +510,7 @@ $('#b-pdf').onclick = () => {
     };
     doc.setFillColor(243,214,0); doc.rect(0,0,W,12,'F');
     put('Would You Fund This? — your reflection', 16, 'bold', 4);
-    put(`BTE603 seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
+    put(`nnherit mini apps · seminar activity · session ${state.session} · ${new Date().toLocaleDateString()}`, 10, 'normal', 6);
     put('Your evidence map (impact / confidence, 1–5)', 12, 'bold', 1);
     state.items.forEach(it=>{
       put(`${it.type==='strength'?'Strength':'Risk'}: "${it.text}" — impact ${it.impact}/5, confidence ${it.confidence}/5, evidence: ${it.evidence}`, 10, 'normal', 1);

@@ -1,5 +1,5 @@
 /**
- * nnherit BTE603 data endpoint — Google Apps Script web app.
+ * nnherit mini apps data endpoint — Google Apps Script web app.
  *
  * Receives the JSON POST each app sends on submit and appends one row
  * per submission to this spreadsheet, one tab per activity ID.
